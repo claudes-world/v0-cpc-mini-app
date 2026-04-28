@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Terminal section - top 1/3 */}
-      <div className="h-[33%] p-2 pb-1">
+      <div className="h-[33%]">
         <TmuxPanel />
       </div>
 
