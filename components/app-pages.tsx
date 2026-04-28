@@ -10,14 +10,15 @@ interface Tab {
   content: ReactNode
 }
 
-interface SwipeableTabsProps {
+interface AppPagesProps {
   tabs: Tab[]
 }
 
-export function SwipeableTabs({ tabs }: SwipeableTabsProps) {
+export function AppPages({ tabs }: AppPagesProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [translateX, setTranslateX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
+  const [swipeProgress, setSwipeProgress] = useState(0) // -1 to 1, representing swipe direction and progress
   const containerRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
   const currentXRef = useRef(0)
@@ -36,6 +37,7 @@ export function SwipeableTabs({ tabs }: SwipeableTabsProps) {
     startXRef.current = e.touches[0].clientX
     currentXRef.current = 0
     setIsDragging(true)
+    setSwipeProgress(0)
   }, [])
 
   const handleTouchMove = useCallback(
@@ -43,6 +45,10 @@ export function SwipeableTabs({ tabs }: SwipeableTabsProps) {
       if (!isDragging) return
       const diff = e.touches[0].clientX - startXRef.current
       currentXRef.current = diff
+
+      // Calculate swipe progress for underline animation
+      const progress = diff / containerWidth.current
+      setSwipeProgress(Math.max(-1, Math.min(1, progress)))
 
       // Add resistance at edges
       const baseOffset = -activeIndex * containerWidth.current
@@ -62,6 +68,7 @@ export function SwipeableTabs({ tabs }: SwipeableTabsProps) {
 
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false)
+    setSwipeProgress(0)
     const threshold = containerWidth.current * 0.2
     const diff = currentXRef.current
 
@@ -93,27 +100,57 @@ export function SwipeableTabs({ tabs }: SwipeableTabsProps) {
     return () => window.removeEventListener("resize", handleResize)
   }, [activeIndex])
 
+  // Calculate underline position and width
+  const getUnderlineStyle = () => {
+    const tabWidth = 100 / tabs.length
+    let position = activeIndex * tabWidth
+
+    // During swipe, interpolate position
+    if (isDragging && swipeProgress !== 0) {
+      // Swiping left (negative progress) means moving to next tab (right)
+      // Swiping right (positive progress) means moving to previous tab (left)
+      const targetIndex = swipeProgress < 0 
+        ? Math.min(activeIndex + 1, tabs.length - 1) 
+        : Math.max(activeIndex - 1, 0)
+      
+      const targetPosition = targetIndex * tabWidth
+      const interpolationFactor = Math.abs(swipeProgress)
+      
+      position = position + (targetPosition - position) * interpolationFactor
+    }
+
+    return {
+      width: `${tabWidth}%`,
+      transform: `translateX(${position / tabWidth * 100}%)`,
+      transition: isDragging ? "none" : "transform 0.3s ease-out",
+    }
+  }
+
   return (
     <div className="flex flex-col h-full">
       {/* Tab headers */}
-      <div className="flex border-b border-border bg-card">
-        {tabs.map((tab, index) => (
-          <button
-            key={tab.id}
-            onClick={() => handleTabClick(index)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors relative ${
-              index === activeIndex
-                ? "text-foreground"
-                : "text-muted-foreground"
-            }`}
-          >
-            <span className="text-sm">{tab.icon}</span>
-            <span>{tab.label}</span>
-            {index === activeIndex && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" />
-            )}
-          </button>
-        ))}
+      <div className="relative border-b border-border bg-card">
+        <div className="flex">
+          {tabs.map((tab, index) => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabClick(index)}
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+                index === activeIndex
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              <span className="text-sm">{tab.icon}</span>
+              <span>{tab.label}</span>
+            </button>
+          ))}
+        </div>
+        {/* Animated underline */}
+        <div 
+          className="absolute bottom-0 left-0 h-0.5 bg-primary"
+          style={getUnderlineStyle()}
+        />
       </div>
 
       {/* Swipeable content */}
@@ -140,18 +177,6 @@ export function SwipeableTabs({ tabs }: SwipeableTabsProps) {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Page indicator dots */}
-      <div className="flex justify-center gap-1.5 py-1.5 bg-card border-t border-border">
-        {tabs.map((_, index) => (
-          <div
-            key={index}
-            className={`w-1.5 h-1.5 rounded-full transition-colors ${
-              index === activeIndex ? "bg-primary" : "bg-muted-foreground/30"
-            }`}
-          />
-        ))}
       </div>
     </div>
   )

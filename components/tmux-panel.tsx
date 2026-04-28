@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 const terminalLines = [
   { type: "prompt", content: "user@server:~$", command: " tmux attach -t dev" },
@@ -13,8 +13,7 @@ const terminalLines = [
   { type: "prompt", content: "user@server:~$", command: " _", isCursor: true },
 ]
 
-export function TerminalView() {
-  const containerRef = useRef<HTMLDivElement>(null)
+export function TmuxPanel() {
   const [cursorVisible, setCursorVisible] = useState(true)
 
   useEffect(() => {
@@ -25,24 +24,12 @@ export function TerminalView() {
   }, [])
 
   return (
-    <div
-      ref={containerRef}
-      className="h-full bg-terminal rounded-md overflow-hidden flex flex-col"
-    >
-      {/* Terminal header */}
-      <div className="flex items-center gap-1.5 px-2 py-1.5 bg-secondary/50 border-b border-border">
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-red-500/80" />
-          <div className="w-2 h-2 rounded-full bg-yellow-500/80" />
-          <div className="w-2 h-2 rounded-full bg-green-500/80" />
-        </div>
-        <span className="text-[10px] text-muted-foreground font-mono ml-2">
-          tmux:dev — bash
-        </span>
-      </div>
+    <div className="h-full bg-terminal rounded-md overflow-hidden flex flex-col relative">
+      {/* Gradient fade mask at top */}
+      <div className="absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-terminal to-transparent z-10 pointer-events-none" />
 
       {/* Terminal content */}
-      <div className="flex-1 overflow-auto p-2 font-mono text-xs leading-relaxed scrollbar-hide">
+      <div className="flex-1 overflow-auto p-2 pt-3 font-mono text-xs leading-relaxed scrollbar-hide">
         {terminalLines.map((line, i) => (
           <div key={i} className="flex">
             {line.type === "prompt" ? (
