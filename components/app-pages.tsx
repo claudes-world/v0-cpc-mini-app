@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
 import { VscFiles, VscIssues, VscGitPullRequest } from "react-icons/vsc"
-import { Haptics, ImpactStyle } from "web-haptics"
+import { WebHaptics } from "web-haptics"
 
 interface Tab {
   id: string
@@ -67,12 +67,12 @@ export function AppPages({ tabs }: AppPagesProps) {
         // Just passed threshold - trigger haptic
         thresholdPassedRef.current = true
         setHasPassedThreshold(true)
-        Haptics.impact({ style: ImpactStyle.Medium })
+        WebHaptics.vibrate({ duration: 15, intensity: 0.8 })
       } else if (!isOverThreshold && thresholdPassedRef.current) {
         // Went back below threshold - trigger softer haptic
         thresholdPassedRef.current = false
         setHasPassedThreshold(false)
-        Haptics.impact({ style: ImpactStyle.Light })
+        WebHaptics.vibrate({ duration: 10, intensity: 0.4 })
       }
 
       // Add resistance at edges
