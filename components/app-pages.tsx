@@ -2,6 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
 import { VscFiles, VscIssues, VscGitPullRequest } from "react-icons/vsc"
+import { Haptics, ImpactStyle } from "web-haptics"
 
 interface Tab {
   id: string
@@ -14,15 +15,19 @@ interface AppPagesProps {
   tabs: Tab[]
 }
 
+const SWIPE_THRESHOLD = 0.25 // 25% of container width
+
 export function AppPages({ tabs }: AppPagesProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [translateX, setTranslateX] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
   const [swipeProgress, setSwipeProgress] = useState(0) // -1 to 1, representing swipe direction and progress
+  const [hasPassedThreshold, setHasPassedThreshold] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
   const currentXRef = useRef(0)
   const containerWidth = useRef(0)
+  const thresholdPassedRef = useRef(false)
 
   useEffect(() => {
     if (containerRef.current) {
@@ -36,8 +41,10 @@ export function AppPages({ tabs }: AppPagesProps) {
     }
     startXRef.current = e.touches[0].clientX
     currentXRef.current = 0
+    thresholdPassedRef.current = false
     setIsDragging(true)
     setSwipeProgress(0)
+    setHasPassedThreshold(false)
   }, [])
 
   const handleTouchMove = useCallback(
@@ -49,6 +56,24 @@ export function AppPages({ tabs }: AppPagesProps) {
       // Calculate swipe progress for underline animation
       const progress = diff / containerWidth.current
       setSwipeProgress(Math.max(-1, Math.min(1, progress)))
+
+      // Check threshold and trigger haptics
+      const threshold = containerWidth.current * SWIPE_THRESHOLD
+      const canSwipeLeft = activeIndex < tabs.length - 1 && diff < 0
+      const canSwipeRight = activeIndex > 0 && diff > 0
+      const isOverThreshold = Math.abs(diff) > threshold && (canSwipeLeft || canSwipeRight)
+
+      if (isOverThreshold && !thresholdPassedRef.current) {
+        // Just passed threshold - trigger haptic
+        thresholdPassedRef.current = true
+        setHasPassedThreshold(true)
+        Haptics.impact({ style: ImpactStyle.Medium })
+      } else if (!isOverThreshold && thresholdPassedRef.current) {
+        // Went back below threshold - trigger softer haptic
+        thresholdPassedRef.current = false
+        setHasPassedThreshold(false)
+        Haptics.impact({ style: ImpactStyle.Light })
+      }
 
       // Add resistance at edges
       const baseOffset = -activeIndex * containerWidth.current
@@ -69,7 +94,8 @@ export function AppPages({ tabs }: AppPagesProps) {
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false)
     setSwipeProgress(0)
-    const threshold = containerWidth.current * 0.2
+    setHasPassedThreshold(false)
+    const threshold = containerWidth.current * SWIPE_THRESHOLD
     const diff = currentXRef.current
 
     let newIndex = activeIndex
