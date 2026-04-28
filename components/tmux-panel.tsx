@@ -29,7 +29,7 @@ export function TmuxPanel() {
       <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-terminal/25 to-transparent z-10 pointer-events-none" />
 
       {/* Terminal content */}
-      <div className="flex-1 overflow-auto px-1 py-0.5 font-mono text-[9px] leading-tight scrollbar-hide">
+      <div className="flex-1 overflow-auto font-mono text-[9px] leading-tight scrollbar-hide">
         {terminalLines.map((line, i) => (
           <div key={i} className="flex">
             {line.type === "prompt" ? (
@@ -66,7 +66,7 @@ export function TmuxPanel() {
       </div>
 
       {/* tmux status bar */}
-      <div className="flex items-center justify-between px-1 py-px bg-primary/20 text-[8px] font-mono">
+      <div className="flex items-center justify-between py-px bg-primary/20 text-[8px] font-mono">
         <span className="text-primary">[dev]</span>
         <div className="flex items-center gap-2 text-muted-foreground">
           <span>0:bash*</span>
