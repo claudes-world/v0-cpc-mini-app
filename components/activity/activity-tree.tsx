@@ -21,7 +21,7 @@ interface ActivityTreeProps {
   isLoading?: boolean
 }
 
-// Org header - darkest with light text, compact
+// Org header - darkest with light text, compact, sticky
 function OrgHeader({ 
   nodeId, 
   name, 
@@ -40,7 +40,7 @@ function OrgHeader({
     <div>
       <button
         onClick={() => toggleNode(nodeId)}
-        className="w-full flex items-center gap-2 px-2 py-1.5 text-left bg-[#1a1e24] hover:bg-[#1e2228] transition-colors border-b border-[#2a2f38]"
+        className="sticky top-0 z-20 w-full flex items-center gap-2 px-2 py-1.5 text-left bg-[#1a1e24] hover:bg-[#1e2228] transition-colors border-b border-[#2a2f38]"
       >
         {expanded ? (
           <VscChevronDown className="w-3 h-3 text-[#88c0d0] flex-shrink-0" />
@@ -56,7 +56,7 @@ function OrgHeader({
   )
 }
 
-// Repo header - dark nord frost with light text, no rounded corners
+// Repo header - dark nord frost with light text, no rounded corners, sticky below org
 function RepoHeader({ 
   nodeId, 
   name, 
@@ -71,11 +71,12 @@ function RepoHeader({
   const { isNodeExpanded, toggleNode } = useActivity()
   const expanded = isNodeExpanded(nodeId)
   
+  // Sticky with top offset to stack below org header (org header is ~28px)
   return (
     <div className="ml-1">
       <button
         onClick={() => toggleNode(nodeId)}
-        className="w-full flex items-center gap-2 px-2 py-1.5 text-left bg-[#2e3440] hover:bg-[#3b4252] transition-colors border-b border-[#434c5e]"
+        className="sticky top-[28px] z-10 w-full flex items-center gap-2 px-2 py-1.5 text-left bg-[#2e3440] hover:bg-[#3b4252] transition-colors border-b border-[#434c5e]"
       >
         {expanded ? (
           <VscChevronDown className="w-3 h-3 text-[#81a1c1] flex-shrink-0" />
