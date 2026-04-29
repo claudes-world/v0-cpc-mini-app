@@ -40,7 +40,7 @@ export default function Home() {
         }}
       >
         {/* Left: Terminal */}
-        <div className="w-1/2 border-r border-border">
+        <div className="w-3/5 border-r border-border">
           <TmuxPanel 
             resizeHandle={
               <DraggableBotSelector
@@ -55,7 +55,7 @@ export default function Home() {
           />
         </div>
         {/* Right: Controls */}
-        <div className="w-1/2">
+        <div className="w-2/5">
           <TerminalControls />
         </div>
       </div>
