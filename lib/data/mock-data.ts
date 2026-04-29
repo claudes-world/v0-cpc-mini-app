@@ -8,6 +8,7 @@ import type {
   ActivityEvent,
   IssueType,
   PRType,
+  ChangedFile,
 } from './activity-types'
 
 // Helper to generate random activity timeline
@@ -51,6 +52,51 @@ const milestones = ['v1.0', 'v1.1', 'v2.0', 'Backlog', undefined]
 
 // PR type labels
 const prTypes: PRType[] = ['fix', 'feat', 'chore', 'other']
+
+// Sample file paths for changed files
+const sampleFiles = [
+  'src/components/Button.tsx',
+  'src/hooks/useAuth.ts',
+  'lib/utils.ts',
+  'app/page.tsx',
+  'app/layout.tsx',
+  'styles/globals.css',
+  'package.json',
+  'tsconfig.json',
+  'next.config.mjs',
+  'README.md',
+  'src/api/client.ts',
+  'src/types/index.d.ts',
+  'tests/Button.test.tsx',
+  'src/components/Dialog.tsx',
+  'src/components/Input.tsx',
+  '.eslintrc.js',
+  'tailwind.config.ts',
+  'src/lib/constants.ts',
+  'app/api/auth/route.ts',
+  'app/dashboard/page.tsx',
+  'src/components/icons/index.tsx',
+  'prisma/schema.prisma',
+  'docker-compose.yml',
+  '.github/workflows/ci.yml',
+  'src/styles/components.scss',
+]
+
+// Helper to generate random changed files
+function generateChangedFiles(count: number): ChangedFile[] {
+  const files: ChangedFile[] = []
+  const shuffled = [...sampleFiles].sort(() => Math.random() - 0.5)
+  
+  for (let i = 0; i < Math.min(count, shuffled.length); i++) {
+    files.push({
+      filename: shuffled[i],
+      additions: Math.floor(Math.random() * 100) + 1,
+      deletions: Math.floor(Math.random() * 50),
+    })
+  }
+  
+  return files
+}
 
 // Mock Issues
 export const mockIssues: Issue[] = [
@@ -168,6 +214,11 @@ export const mockPullRequests: PullRequest[] = [
     lastActivity: new Date(Date.now() - 30 * 60 * 1000),
     commentCount: 3,
     commitCount: 5,
+    changedFiles: [
+      { filename: 'packages/next/src/client/app-router.tsx', additions: 45, deletions: 12 },
+      { filename: 'packages/next/src/server/render.ts', additions: 23, deletions: 8 },
+      { filename: 'test/e2e/app-dir/hydration.test.ts', additions: 67, deletions: 0 },
+    ],
     activityTimeline: generateActivityTimeline(8),
   },
   {
@@ -180,6 +231,13 @@ export const mockPullRequests: PullRequest[] = [
     lastActivity: new Date(Date.now() - 2 * 60 * 60 * 1000),
     commentCount: 15,
     commitCount: 12,
+    changedFiles: [
+      { filename: 'packages/next/src/build/webpack-config.ts', additions: 89, deletions: 23 },
+      { filename: 'packages/next/src/server/ppr.ts', additions: 234, deletions: 0 },
+      { filename: 'packages/next/src/client/components/layout-router.tsx', additions: 56, deletions: 34 },
+      { filename: 'docs/ppr.md', additions: 145, deletions: 0 },
+      { filename: 'next.config.mjs', additions: 8, deletions: 2 },
+    ],
     activityTimeline: generateActivityTimeline(27),
   },
   {
@@ -204,6 +262,14 @@ export const mockPullRequests: PullRequest[] = [
     lastActivity: new Date(Date.now() - 1 * 60 * 60 * 1000),
     commentCount: 8,
     commitCount: 18,
+    changedFiles: [
+      { filename: 'src/ai/context-analyzer.ts', additions: 312, deletions: 0 },
+      { filename: 'src/ai/suggestion-engine.ts', additions: 187, deletions: 45 },
+      { filename: 'src/components/CodeEditor.tsx', additions: 67, deletions: 12 },
+      { filename: 'src/hooks/useSuggestions.ts', additions: 89, deletions: 0 },
+      { filename: 'tests/context-analyzer.test.ts', additions: 234, deletions: 0 },
+      { filename: 'package.json', additions: 3, deletions: 1 },
+    ],
     activityTimeline: generateActivityTimeline(26),
   },
   {
@@ -228,6 +294,12 @@ export const mockPullRequests: PullRequest[] = [
     lastActivity: new Date(Date.now() - 3 * 60 * 60 * 1000),
     commentCount: 21,
     commitCount: 15,
+    changedFiles: [
+      { filename: 'apps/www/registry/new-york/ui/sidebar.tsx', additions: 456, deletions: 0 },
+      { filename: 'apps/www/registry/default/ui/sidebar.tsx', additions: 423, deletions: 0 },
+      { filename: 'apps/www/content/docs/components/sidebar.mdx', additions: 234, deletions: 0 },
+      { filename: 'apps/www/public/registry/styles/new-york/sidebar.json', additions: 45, deletions: 0 },
+    ],
     activityTimeline: generateActivityTimeline(36),
   },
   {
@@ -303,6 +375,7 @@ export function generateMorePRs(page: number, pageSize: number = 25): PullReques
       lastActivity: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
       commentCount: Math.floor(Math.random() * 15),
       commitCount: Math.floor(Math.random() * 25) + 1,
+      changedFiles: generateChangedFiles(Math.floor(Math.random() * 8) + 1),
       activityTimeline: generateActivityTimeline(Math.floor(Math.random() * 40) + 5),
     })
   }

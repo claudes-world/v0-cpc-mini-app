@@ -33,6 +33,12 @@ export interface Issue {
 export type PRType = 'fix' | 'feat' | 'chore' | 'other'
 export type PRStatus = 'open' | 'merged' | 'closed'
 
+export interface ChangedFile {
+  filename: string
+  additions: number
+  deletions: number
+}
+
 export interface PullRequest {
   id: string
   number: number
@@ -43,6 +49,7 @@ export interface PullRequest {
   lastActivity: Date
   commentCount: number
   commitCount: number
+  changedFiles?: ChangedFile[]
   activityTimeline: ActivityEvent[]
 }
 

@@ -2,6 +2,7 @@
 
 import type { PullRequest } from '@/lib/data/activity-types'
 import { ActivitySparkline } from './activity-sparkline'
+import { FileIcon } from '../file-icon'
 import { 
   VscGitPullRequest, 
   VscComment, 
@@ -45,10 +46,19 @@ function formatTimeAgo(date: Date): string {
   return `${Math.floor(days / 7)}w ago`
 }
 
+// Get just the filename from a path
+function getFilename(path: string): string {
+  return path.split('/').pop() || path
+}
+
 export function PRCard({ pr }: PRCardProps) {
   const typeStyle = typeConfig[pr.type] || typeConfig.other
   const statusStyle = statusConfig[pr.status]
   const StatusIcon = statusStyle.icon
+  
+  // Show up to 4 file icons
+  const filesToShow = pr.changedFiles?.slice(0, 4) || []
+  const moreFilesCount = (pr.changedFiles?.length || 0) - 4
   
   return (
     <div className="group relative bg-[#252a33] hover:bg-[#2a303a] transition-all border-b border-[#3b4252]/50">
@@ -93,6 +103,24 @@ export function PRCard({ pr }: PRCardProps) {
             {pr.title}
           </p>
         </div>
+        
+        {/* File icons row - if there are changed files */}
+        {filesToShow.length > 0 && (
+          <div className="flex items-center gap-1 mb-1 ml-6">
+            {filesToShow.map((file, idx) => (
+              <div 
+                key={idx} 
+                className="flex items-center gap-0.5 group/file"
+                title={`${file.filename} (+${file.additions} -${file.deletions})`}
+              >
+                <FileIcon filename={getFilename(file.filename)} size={12} />
+              </div>
+            ))}
+            {moreFilesCount > 0 && (
+              <span className="text-[8px] text-muted-foreground">+{moreFilesCount}</span>
+            )}
+          </div>
+        )}
         
         {/* Bottom row: Stats and sparkline */}
         <div className="flex items-center gap-2">
