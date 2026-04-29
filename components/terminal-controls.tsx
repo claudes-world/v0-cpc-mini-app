@@ -99,15 +99,14 @@ export function TerminalControls() {
         <SlashCommand command="/branch" alias="fork" />
         
         {/* Rename with input */}
-        <div className="flex items-center px-2 py-1 bg-secondary/30 border-b border-border/30">
-          <span className="text-foreground font-mono text-[11px] font-medium">/rename</span>
-          <div className="flex-1" />
+        <div className="flex items-center gap-2 px-2 py-1 bg-secondary/30 border-b border-border/30">
+          <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
           <input
             type="text"
             value={sessionName}
             onChange={(e) => setSessionName(e.target.value)}
             placeholder="name..."
-            className="w-20 h-5 px-1.5 text-[16px] bg-input border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            className="flex-1 min-w-0 h-5 px-1.5 text-[16px] bg-input border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             style={{ fontSize: '16px' }}
           />
         </div>

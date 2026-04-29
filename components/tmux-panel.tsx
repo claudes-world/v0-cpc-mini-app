@@ -29,8 +29,8 @@ export function TmuxPanel() {
       {/* Gradient fade mask at top - fades to 25% opacity */}
       <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-terminal/25 to-transparent z-10 pointer-events-none" />
 
-      {/* Bot selector overlay - bottom right */}
-      <div className="absolute bottom-6 right-1 z-20">
+      {/* Bot selector overlay - bottom right, flush with edges */}
+      <div className="absolute bottom-0 right-0 z-20">
         <BotSelector />
       </div>
 
