@@ -26,11 +26,19 @@ export function TmuxPanel() {
 
   return (
     <div className="h-full bg-terminal overflow-hidden flex flex-col relative">
+      {/* Inset shadow overlay - creates recessed appearance */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{
+          boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.4), inset 4px 0 8px -4px rgba(0,0,0,0.3), inset -4px 0 8px -4px rgba(0,0,0,0.3), inset 0 -4px 8px -4px rgba(0,0,0,0.2)'
+        }}
+      />
+
       {/* Gradient fade mask at top - fades to 25% opacity */}
       <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-terminal/25 to-transparent z-10 pointer-events-none" />
 
       {/* Bot selector overlay - bottom right, flush with edges */}
-      <div className="absolute bottom-0 right-0 z-20">
+      <div className="absolute bottom-0 right-0 z-30">
         <BotSelector />
       </div>
 

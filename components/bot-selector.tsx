@@ -32,7 +32,10 @@ export function BotSelector() {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-mono bg-secondary/80 border-t border-l border-border rounded-tl text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+        className="flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-mono bg-secondary border-t border-l border-border rounded-tl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+        style={{
+          boxShadow: '-4px -4px 8px -2px rgba(0,0,0,0.4)'
+        }}
       >
         <span className="truncate max-w-[90px]">{selected.label}</span>
         <VscChevronDown className={`w-3 h-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
