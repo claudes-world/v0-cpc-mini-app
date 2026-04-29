@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { BotSelector } from "./bot-selector"
+import { useEffect, useState, type ReactNode } from "react"
 
 const terminalLines = [
   { type: "prompt", content: "user@server:~$", command: " tmux attach -t dev" },
@@ -14,7 +13,11 @@ const terminalLines = [
   { type: "prompt", content: "user@server:~$", command: " _", isCursor: true },
 ]
 
-export function TmuxPanel() {
+interface TmuxPanelProps {
+  resizeHandle?: ReactNode
+}
+
+export function TmuxPanel({ resizeHandle }: TmuxPanelProps) {
   const [cursorVisible, setCursorVisible] = useState(true)
 
   useEffect(() => {
@@ -37,10 +40,12 @@ export function TmuxPanel() {
       {/* Gradient fade mask at top - fades to 25% opacity */}
       <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-terminal/25 to-transparent z-10 pointer-events-none" />
 
-      {/* Bot selector overlay - bottom right, flush with edges */}
-      <div className="absolute bottom-0 right-0 z-30">
-        <BotSelector />
-      </div>
+      {/* Resize handle overlay - bottom right, flush with edges */}
+      {resizeHandle && (
+        <div className="absolute bottom-0 right-0 z-30">
+          {resizeHandle}
+        </div>
+      )}
 
       {/* Terminal content */}
       <div className="flex-1 overflow-auto px-0.5 font-mono text-[9px] leading-tight scrollbar-hide">

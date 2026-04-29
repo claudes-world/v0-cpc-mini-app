@@ -1,6 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 // Nord-themed keyboard key colors
 const keyStyles = {
@@ -57,7 +65,7 @@ function SlashCommand({ command, alias, rightContent, onClick }: SlashCommandPro
       className="w-full flex items-center justify-between px-2 py-1 bg-secondary/30 border-b border-border/80 active:bg-accent transition-colors text-left"
     >
       <div className="flex items-center gap-1.5">
-        <span className="text-foreground font-mono text-[11px] font-medium">{command}</span>
+        <span className="text-[#81a1c1] font-mono text-[11px] font-medium">{command}</span>
         {alias && <span className="text-muted-foreground text-[9px]">({alias})</span>}
       </div>
       {rightContent && <div className="flex-shrink-0 ml-2">{rightContent}</div>}
@@ -68,6 +76,32 @@ function SlashCommand({ command, alias, rightContent, onClick }: SlashCommandPro
 export function TerminalControls() {
   const [sessionName, setSessionName] = useState("")
   const [selectedColor, setSelectedColor] = useState("green")
+  const [newModalOpen, setNewModalOpen] = useState(false)
+  const [compactModalOpen, setCompactModalOpen] = useState(false)
+  const [branchModalOpen, setBranchModalOpen] = useState(false)
+  const [compactGuidance, setCompactGuidance] = useState("")
+
+  const handleClear = () => {
+    // Clear action
+    setNewModalOpen(false)
+  }
+
+  const handleCompact = () => {
+    // Compact action
+    setCompactModalOpen(false)
+    setCompactGuidance("")
+  }
+
+  const handlePromptContinuity = () => {
+    // Prompt for continuity action
+    setCompactModalOpen(false)
+    setCompactGuidance("")
+  }
+
+  const handleBranch = () => {
+    // Branch action
+    setBranchModalOpen(false)
+  }
 
   return (
     <div className="h-full flex flex-col bg-secondary/20">
@@ -99,14 +133,14 @@ export function TerminalControls() {
 
       {/* Slash commands */}
       <div className="flex-1 overflow-auto scrollbar-hide">
-        <SlashCommand command="/new" alias="clear" />
-        <SlashCommand command="/compact" />
-        <SlashCommand command="/branch" alias="fork" />
+        <SlashCommand command="/new" alias="clear" onClick={() => setNewModalOpen(true)} />
+        <SlashCommand command="/compact" onClick={() => setCompactModalOpen(true)} />
+        <SlashCommand command="/branch" alias="fork" onClick={() => setBranchModalOpen(true)} />
         <SlashCommand command="/reload-plugins" />
         
         {/* Rename with input */}
-        <div className="flex items-center gap-1 px-1.5 py-1 bg-secondary/30 border-b border-border/80">
-          <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
+        <div className="flex items-center gap-1 px-2 py-1 bg-secondary/30 border-b border-border/80">
+          <span className="text-[#81a1c1] font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
           <input
             type="text"
             value={sessionName}
@@ -118,25 +152,119 @@ export function TerminalControls() {
         </div>
 
         {/* Color with radio buttons */}
-        <div className="flex items-center px-2 py-1 bg-secondary/30 border-b border-border/80">
-          <span className="text-foreground font-mono text-[11px] font-medium">/color</span>
-          <div className="flex-1" />
-          <div className="flex items-center gap-1">
-            {sessionColors.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setSelectedColor(c.id)}
-                className={`w-4 h-4 rounded-sm ${c.color} ${
-                  selectedColor === c.id 
-                    ? "ring-1 ring-white ring-offset-1 ring-offset-background" 
-                    : "opacity-60 hover:opacity-100"
-                } transition-all`}
-                aria-label={`Select ${c.id} color`}
-              />
-            ))}
+        <div className="flex items-center gap-3 px-2 py-1 bg-secondary/30 border-b border-border/80">
+          <span className="text-[#81a1c1] font-mono text-[11px] font-medium flex-shrink-0">/color</span>
+          <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1">
+              {sessionColors.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedColor(c.id)}
+                  className={`w-4 h-4 flex-shrink-0 rounded-sm ${c.color} ${
+                    selectedColor === c.id 
+                      ? "ring-1 ring-white ring-offset-1 ring-offset-background" 
+                      : "opacity-60 hover:opacity-100"
+                  } transition-all`}
+                  aria-label={`Select ${c.id} color`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* /new Modal */}
+      <Dialog open={newModalOpen} onOpenChange={setNewModalOpen}>
+        <DialogContent showCloseButton={false} className="max-w-xs">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Clear Session</DialogTitle>
+            <DialogDescription className="text-xs">
+              This will clear all current session data. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row gap-2">
+            <button
+              onClick={() => setNewModalOpen(false)}
+              className="flex-1 px-3 py-1.5 text-xs font-medium rounded bg-[#2e3440] text-[#d8dee9] hover:bg-[#3b4252] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleClear}
+              className="flex-1 px-3 py-1.5 text-xs font-medium rounded bg-[#bf616a] text-white hover:bg-[#a54e56] transition-colors"
+            >
+              Clear
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* /compact Modal */}
+      <Dialog open={compactModalOpen} onOpenChange={setCompactModalOpen}>
+        <DialogContent showCloseButton={false} className="max-w-xs">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Compact Session</DialogTitle>
+          </DialogHeader>
+          <div className="py-2">
+            <input
+              type="text"
+              value={compactGuidance}
+              onChange={(e) => setCompactGuidance(e.target.value)}
+              placeholder="compact / continuity guidance"
+              className="w-full h-8 px-2 text-xs bg-input border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </div>
+          <DialogFooter className="flex-row gap-2">
+            <button
+              onClick={() => {
+                setCompactModalOpen(false)
+                setCompactGuidance("")
+              }}
+              className="flex-1 px-3 py-1.5 text-xs font-medium rounded bg-[#2e3440] text-[#d8dee9] hover:bg-[#3b4252] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handlePromptContinuity}
+              className="flex-1 px-3 py-1.5 text-xs font-medium rounded bg-[#ebcb8b] text-[#2e3440] hover:bg-[#d9ba7a] transition-colors"
+            >
+              Prompt for Continuity
+            </button>
+            <button
+              onClick={handleCompact}
+              className="flex-1 px-3 py-1.5 text-xs font-medium rounded bg-[#d08770] text-white hover:bg-[#bf7663] transition-colors"
+            >
+              Compact
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* /branch Modal */}
+      <Dialog open={branchModalOpen} onOpenChange={setBranchModalOpen}>
+        <DialogContent showCloseButton={false} className="max-w-xs">
+          <DialogHeader>
+            <DialogTitle className="text-sm">Branch Session</DialogTitle>
+            <DialogDescription className="text-xs">
+              Create a new branch from the current session state?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row gap-2">
+            <button
+              onClick={() => setBranchModalOpen(false)}
+              className="flex-1 px-3 py-1.5 text-xs font-medium rounded bg-[#2e3440] text-[#d8dee9] hover:bg-[#3b4252] transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleBranch}
+              className="flex-1 px-3 py-1.5 text-xs font-medium rounded bg-[#81a1c1] text-[#2e3440] hover:bg-[#6d8faf] transition-colors"
+            >
+              Confirm
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
