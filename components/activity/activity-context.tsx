@@ -6,6 +6,7 @@ import type { ViewMode, IssueType, PRType, IssueFilters, PRFilters } from '@/lib
 // State shape
 interface ActivityState {
   selectedOrgs: Set<string>
+  orgOrder: string[] // Manual sort order for orgs
   expandedNodes: Set<string>
   viewMode: ViewMode
   issueFilters: IssueFilters
@@ -18,6 +19,7 @@ interface ActivityState {
 type ActivityAction =
   | { type: 'TOGGLE_ORG'; orgId: string }
   | { type: 'SET_SELECTED_ORGS'; orgIds: string[] }
+  | { type: 'SET_ORG_ORDER'; orgIds: string[] }
   | { type: 'TOGGLE_NODE'; nodeId: string }
   | { type: 'SET_VIEW_MODE'; mode: ViewMode }
   | { type: 'SET_ISSUE_TYPES'; types: IssueType[] }
@@ -30,6 +32,7 @@ type ActivityAction =
 // Initial state
 const initialState: ActivityState = {
   selectedOrgs: new Set<string>(),
+  orgOrder: [],
   expandedNodes: new Set<string>(),
   viewMode: 'both',
   issueFilters: {
@@ -58,6 +61,10 @@ function activityReducer(state: ActivityState, action: ActivityAction): Activity
     
     case 'SET_SELECTED_ORGS': {
       return { ...state, selectedOrgs: new Set(action.orgIds), issuePages: 0, prPages: 0 }
+    }
+    
+    case 'SET_ORG_ORDER': {
+      return { ...state, orgOrder: action.orgIds }
     }
     
     case 'TOGGLE_NODE': {
@@ -126,6 +133,7 @@ interface ActivityContextValue {
   isNodeExpanded: (nodeId: string) => boolean
   toggleOrg: (orgId: string) => void
   toggleNode: (nodeId: string) => void
+  setOrgOrder: (orgIds: string[]) => void
   setViewMode: (mode: ViewMode) => void
   setIssueTypes: (types: IssueType[]) => void
   setPRTypes: (types: PRType[]) => void
@@ -147,6 +155,7 @@ export function ActivityProvider({ children }: { children: ReactNode }) {
     isNodeExpanded: (nodeId) => state.expandedNodes.has(nodeId),
     toggleOrg: (orgId) => dispatch({ type: 'TOGGLE_ORG', orgId }),
     toggleNode: (nodeId) => dispatch({ type: 'TOGGLE_NODE', nodeId }),
+    setOrgOrder: (orgIds) => dispatch({ type: 'SET_ORG_ORDER', orgIds }),
     setViewMode: (mode) => dispatch({ type: 'SET_VIEW_MODE', mode }),
     setIssueTypes: (types) => dispatch({ type: 'SET_ISSUE_TYPES', types }),
     setPRTypes: (types) => dispatch({ type: 'SET_PR_TYPES', types }),

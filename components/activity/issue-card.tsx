@@ -48,38 +48,26 @@ export function IssueCard({ issue }: IssueCardProps) {
     <div className="group relative bg-[#252a33] hover:bg-[#2a303a] transition-all border-b border-[#3b4252]/50">
       {/* Left color accent bar */}
       <div 
-        className="absolute left-0 top-0 bottom-0 w-1 rounded-l"
+        className="absolute left-0 top-0 bottom-0 w-1"
         style={{ backgroundColor: statusColor }}
       />
       
-      <div className="pl-3 pr-2 py-3">
-        {/* Top row: Status icon, type badge, number, milestone, time */}
-        <div className="flex items-center gap-2 mb-2">
-          {/* Status icon with glow effect */}
-          <div 
-            className="relative flex items-center justify-center w-6 h-6 rounded-full"
-            style={{ backgroundColor: `${statusColor}20` }}
-          >
-            {isOpen ? (
-              <VscIssues className="w-3.5 h-3.5" style={{ color: statusColor }} />
-            ) : (
-              <VscPass className="w-3.5 h-3.5" style={{ color: statusColor }} />
-            )}
-          </div>
+      <div className="pl-2.5 pr-2 py-1.5">
+        {/* Top row: Number first, type badge, milestone, time */}
+        <div className="flex items-center gap-1.5 mb-1">
+          {/* Issue number - FIRST and larger */}
+          <span className="text-[13px] font-mono font-semibold text-[#88c0d0]">#{issue.number}</span>
           
           {/* Type badge */}
-          <span className={`px-1.5 py-0.5 text-[8px] font-bold tracking-wide rounded ${typeStyle.bg} ${typeStyle.text}`}>
+          <span className={`px-1 py-0.5 text-[7px] font-bold tracking-wide ${typeStyle.bg} ${typeStyle.text}`}>
             {typeStyle.label}
           </span>
           
-          {/* Issue number */}
-          <span className="text-[11px] font-mono text-[#88c0d0]">#{issue.number}</span>
-          
           {/* Milestone if exists */}
           {issue.milestone && (
-            <div className="flex items-center gap-0.5 px-1.5 py-0.5 bg-[#5e81ac]/20 rounded">
-              <VscMilestone className="w-3 h-3 text-[#5e81ac]" />
-              <span className="text-[8px] text-[#5e81ac] font-medium">{issue.milestone}</span>
+            <div className="flex items-center gap-0.5 px-1 py-0.5 bg-[#5e81ac]/20">
+              <VscMilestone className="w-2.5 h-2.5 text-[#5e81ac]" />
+              <span className="text-[7px] text-[#5e81ac] font-medium">{issue.milestone}</span>
             </div>
           )}
           
@@ -87,28 +75,43 @@ export function IssueCard({ issue }: IssueCardProps) {
           <span className="text-[9px] text-muted-foreground ml-auto">{formatTimeAgo(issue.lastActivity)}</span>
         </div>
         
-        {/* Title row */}
-        <p className="text-[12px] text-foreground font-medium leading-snug mb-2 line-clamp-2">
-          {issue.title}
-        </p>
+        {/* Second row: Status icon first, then title */}
+        <div className="flex items-start gap-1.5 mb-1">
+          {/* Status icon */}
+          <div 
+            className="relative flex items-center justify-center w-5 h-5 flex-shrink-0 mt-0.5"
+            style={{ backgroundColor: `${statusColor}20` }}
+          >
+            {isOpen ? (
+              <VscIssues className="w-3 h-3" style={{ color: statusColor }} />
+            ) : (
+              <VscPass className="w-3 h-3" style={{ color: statusColor }} />
+            )}
+          </div>
+          
+          {/* Title */}
+          <p className="text-[11px] text-foreground font-medium leading-snug line-clamp-2">
+            {issue.title}
+          </p>
+        </div>
         
         {/* Bottom row: Stats and sparkline */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {/* Comment count */}
-          <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
-            <VscComment className="w-3.5 h-3.5 text-[#88c0d0]" />
+          <div className="flex items-center gap-0.5 text-[9px] text-muted-foreground">
+            <VscComment className="w-3 h-3 text-[#88c0d0]" />
             <span className="font-mono">{issue.commentCount}</span>
           </div>
           
           {/* Reference count */}
-          <div className="flex items-center gap-1 text-[9px] text-muted-foreground">
-            <VscReferences className="w-3.5 h-3.5 text-[#d08770]" />
+          <div className="flex items-center gap-0.5 text-[9px] text-muted-foreground">
+            <VscReferences className="w-3 h-3 text-[#d08770]" />
             <span className="font-mono">{issue.referenceCount}</span>
           </div>
           
           {/* Status indicator */}
-          <div className="flex items-center gap-1">
-            <VscCircleFilled className="w-2 h-2" style={{ color: statusColor }} />
+          <div className="flex items-center gap-0.5">
+            <VscCircleFilled className="w-1.5 h-1.5" style={{ color: statusColor }} />
             <span className="text-[8px] font-medium" style={{ color: statusColor }}>
               {isOpen ? 'Open' : 'Closed'}
             </span>
@@ -118,8 +121,8 @@ export function IssueCard({ issue }: IssueCardProps) {
           <div className="ml-auto">
             <ActivitySparkline 
               events={issue.activityTimeline} 
-              width={60} 
-              height={16}
+              width={50} 
+              height={14}
             />
           </div>
         </div>

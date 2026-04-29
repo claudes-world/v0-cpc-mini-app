@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from 'react'
 import { useActivity } from './activity-context'
 import { PRFilters, IssueFilters } from './activity-filters'
 import { IssueCard } from './issue-card'
@@ -55,7 +56,7 @@ function OrgHeader({
   )
 }
 
-// Repo header - light nord with dark text, 50% taller, indented, rounded
+// Repo header - dark nord frost with light text, no rounded corners
 function RepoHeader({ 
   nodeId, 
   name, 
@@ -71,24 +72,24 @@ function RepoHeader({
   const expanded = isNodeExpanded(nodeId)
   
   return (
-    <div className="ml-2 my-1">
+    <div className="ml-1">
       <button
         onClick={() => toggleNode(nodeId)}
-        className="w-full flex items-center gap-2 px-3 py-2 text-left bg-[#3b4252] hover:bg-[#434c5e] transition-colors rounded-md border border-[#4c566a]/50"
+        className="w-full flex items-center gap-2 px-2 py-1.5 text-left bg-[#2e3440] hover:bg-[#3b4252] transition-colors border-b border-[#434c5e]"
       >
         {expanded ? (
-          <VscChevronDown className="w-3.5 h-3.5 text-[#2e3440] flex-shrink-0" />
+          <VscChevronDown className="w-3 h-3 text-[#81a1c1] flex-shrink-0" />
         ) : (
-          <VscChevronRight className="w-3.5 h-3.5 text-[#2e3440] flex-shrink-0" />
+          <VscChevronRight className="w-3 h-3 text-[#81a1c1] flex-shrink-0" />
         )}
-        <VscRepo className="w-4 h-4 text-[#2e3440] flex-shrink-0" />
-        <span className="text-[11px] font-semibold text-[#2e3440] truncate">{name}</span>
+        <VscRepo className="w-3.5 h-3.5 text-[#81a1c1] flex-shrink-0" />
+        <span className="text-[10px] font-medium text-[#d8dee9] truncate">{name}</span>
         <div className="flex items-center gap-1 ml-auto">
-          <VscGitMerge className="w-3 h-3 text-[#2e3440]/60" />
-          <span className="text-[9px] text-[#2e3440]/80 tabular-nums">{count}</span>
+          <VscGitMerge className="w-3 h-3 text-[#5e81ac]" />
+          <span className="text-[9px] text-[#88c0d0] tabular-nums">{count}</span>
         </div>
       </button>
-      {expanded && <div className="mt-1">{children}</div>}
+      {expanded && <div>{children}</div>}
     </div>
   )
 }
@@ -114,10 +115,10 @@ function SectionHeader({
   const label = isPR ? 'Pull Requests' : 'Issues'
   
   return (
-    <div className="ml-4">
+    <div className="ml-2">
       <button
         onClick={() => toggleNode(nodeId)}
-        className="w-full flex items-center gap-2 px-3 py-2.5 text-left bg-[#252a33] hover:bg-[#2a303a] transition-colors border-l-2"
+        className="w-full flex items-center gap-2 px-2 py-2 text-left bg-[#252a33] hover:bg-[#2a303a] transition-colors border-l-2"
         style={{ borderLeftColor: color }}
       >
         {expanded ? (
@@ -141,7 +142,19 @@ function SectionHeader({
 
 export function ActivityTree({ data, isLoading }: ActivityTreeProps) {
   const { state, loadMoreIssues, loadMorePRs } = useActivity()
-  const { viewMode } = state
+  const { viewMode, orgOrder } = state
+  
+  // Sort data based on org order from right column
+  const sortedData = useMemo(() => {
+    if (orgOrder.length === 0) return data
+    
+    const orderMap = new Map(orgOrder.map((id, idx) => [id, idx]))
+    return [...data].sort((a, b) => {
+      const aIdx = orderMap.get(a.org.id) ?? Infinity
+      const bIdx = orderMap.get(b.org.id) ?? Infinity
+      return aIdx - bIdx
+    })
+  }, [data, orgOrder])
   
   if (isLoading) {
     return (
@@ -165,7 +178,7 @@ export function ActivityTree({ data, isLoading }: ActivityTreeProps) {
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1 overflow-y-auto scrollbar-hide">
-        {data.map((orgGroup) => (
+        {sortedData.map((orgGroup) => (
           <OrgHeader
             key={orgGroup.org.id}
             nodeId={`org-${orgGroup.org.id}`}
@@ -186,9 +199,9 @@ export function ActivityTree({ data, isLoading }: ActivityTreeProps) {
                     type="prs"
                     count={repoGroup.prs.length}
                   >
-                    <div className="ml-6 border-l border-[#b48ead]/30">
+                    <div className="ml-3 border-l border-[#b48ead]/30">
                       <PRFilters />
-                      <div className="space-y-0.5">
+                      <div>
                         {repoGroup.prs.map((pr) => (
                           <PRCard key={pr.id} pr={pr} />
                         ))}
@@ -204,9 +217,9 @@ export function ActivityTree({ data, isLoading }: ActivityTreeProps) {
                     type="issues"
                     count={repoGroup.issues.length}
                   >
-                    <div className="ml-6 border-l border-[#a3be8c]/30">
+                    <div className="ml-3 border-l border-[#a3be8c]/30">
                       <IssueFilters />
-                      <div className="space-y-0.5">
+                      <div>
                         {repoGroup.issues.map((issue) => (
                           <IssueCard key={issue.id} issue={issue} />
                         ))}

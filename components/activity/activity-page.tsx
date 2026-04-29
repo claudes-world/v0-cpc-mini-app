@@ -93,15 +93,15 @@ function ActivityPageContent() {
       {/* View mode toggle header */}
       <ViewModeToggle />
       
-      {/* Main content: 2/3 tree + 1/3 org selector */}
+      {/* Main content: 3/4 tree + 1/4 org selector */}
       <div className="flex-1 flex min-h-0">
         {/* Left: Activity tree */}
-        <div className="w-2/3 flex flex-col min-h-0">
+        <div className="w-3/4 flex flex-col min-h-0">
           <ActivityTree data={activityData} isLoading={isLoading} />
         </div>
         
-        {/* Right: Org selector */}
-        <div className="w-1/3">
+        {/* Right: Org selector (narrower) */}
+        <div className="w-1/4">
           <OrgSelector organizations={organizations} />
         </div>
       </div>
