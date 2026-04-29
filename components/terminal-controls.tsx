@@ -4,16 +4,18 @@ import { useState } from "react"
 
 // Nord-themed keyboard key colors
 const keyStyles = {
-  base: "flex items-center justify-center font-mono text-[10px] font-medium rounded-[4px] border shadow-[0_2px_0_0_#2e3440,inset_0_1px_0_0_rgba(255,255,255,0.08)] active:translate-y-[1px] active:shadow-[0_1px_0_0_#2e3440,inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-all duration-75",
+  base: "flex items-center justify-center font-mono text-[10px] font-medium rounded-[4px] border shadow-[0_2px_0_0_#1a1e24,inset_0_1px_0_0_rgba(255,255,255,0.08)] active:translate-y-[1px] active:shadow-[0_1px_0_0_#1a1e24,inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-all duration-75",
   // Nord Polar Night keys (nord3 -> nord2)
   slate: "bg-gradient-to-b from-[#4c566a] to-[#434c5e] text-[#d8dee9] border-[#3b4252]",
   // Nord Aurora red for ESC (nord11)
   coral: "bg-gradient-to-b from-[#bf616a] to-[#a54e56] text-[#eceff4] border-[#8b4049] font-semibold",
+  // Darker blue for function/modifier keys (like Keychron F-row)
+  darkBlue: "bg-gradient-to-b from-[#3b4252] to-[#2e3440] text-[#81a1c1] border-[#2e3440]",
 }
 
 interface KeyButtonProps {
   children: React.ReactNode
-  variant?: "slate" | "coral"
+  variant?: "slate" | "coral" | "darkBlue"
   className?: string
   onClick?: () => void
 }
@@ -52,7 +54,7 @@ function SlashCommand({ command, alias, rightContent, onClick }: SlashCommandPro
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between px-2 py-1 bg-secondary/30 border-b border-border/30 active:bg-accent transition-colors text-left"
+      className="w-full flex items-center justify-between px-2 py-1 bg-secondary/30 border-b border-border/80 active:bg-accent transition-colors text-left"
     >
       <div className="flex items-center gap-1.5">
         <span className="text-foreground font-mono text-[11px] font-medium">{command}</span>
@@ -76,19 +78,23 @@ export function TerminalControls() {
         <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Gamma</span>
       </div>
 
-      {/* Keyboard keys */}
-      <div className="flex items-center gap-1 p-1.5 border-b border-border/50">
+      {/* Keyboard keys - row 1 */}
+      <div className="flex items-center gap-1 px-1.5 pt-1.5 pb-0.5">
         <KeyButton variant="coral" className="h-7 px-2">esc</KeyButton>
         <KeyButton className="h-7 w-7">1</KeyButton>
         <KeyButton className="h-7 w-7">2</KeyButton>
         <KeyButton className="h-7 w-7">3</KeyButton>
-        <KeyButton className="h-7 px-1.5 text-[8px]">
+      </div>
+      {/* Keyboard keys - row 2 */}
+      <div className="flex items-center gap-1 px-1.5 pt-0.5 pb-1.5 border-b border-border/50">
+        <KeyButton variant="darkBlue" className="h-7 px-1.5 text-[8px]">
           <span className="flex items-center gap-0.5">
             <span>⇧</span>
             <span>Tab</span>
           </span>
         </KeyButton>
-        <KeyButton className="h-7 px-1.5">^C</KeyButton>
+        <KeyButton variant="darkBlue" className="h-7 px-1.5">^C</KeyButton>
+        <KeyButton variant="darkBlue" className="h-7 px-1.5">^B</KeyButton>
       </div>
 
       {/* Slash commands */}
@@ -98,7 +104,7 @@ export function TerminalControls() {
         <SlashCommand command="/branch" alias="fork" />
         
         {/* Rename with input */}
-        <div className="flex items-center gap-1 px-1.5 py-1 bg-secondary/30 border-b border-border/30">
+        <div className="flex items-center gap-1 px-1.5 py-1 bg-secondary/30 border-b border-border/80">
           <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
           <input
             type="text"
@@ -111,7 +117,7 @@ export function TerminalControls() {
         </div>
 
         {/* Color with radio buttons */}
-        <div className="flex items-center px-2 py-1 bg-secondary/30 border-b border-border/30">
+        <div className="flex items-center px-2 py-1 bg-secondary/30 border-b border-border/80">
           <span className="text-foreground font-mono text-[11px] font-medium">/color</span>
           <div className="flex-1" />
           <div className="flex items-center gap-1">
