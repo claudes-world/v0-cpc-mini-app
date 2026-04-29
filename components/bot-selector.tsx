@@ -1,12 +1,8 @@
 "use client"
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import * as SelectPrimitive from "@radix-ui/react-select"
+import { VscChevronDown } from "react-icons/vsc"
+import { useState } from "react"
 
 const bots = [
   { id: "claude_do_bot", label: "claude_do_bot" },
@@ -19,32 +15,47 @@ const bots = [
 ]
 
 export function BotSelector() {
+  const [value, setValue] = useState("claude_do_bot")
+  const selectedBot = bots.find(b => b.id === value)
+
   return (
-    <Select defaultValue="claude_do_bot">
-      <SelectTrigger 
-        className="h-auto min-h-0 w-auto min-w-0 gap-1 px-1.5 py-0.5 text-[9px] font-mono bg-border text-background border-0 border-t border-l border-border rounded-none rounded-tl shadow-none focus:ring-0 focus-visible:ring-0"
+    <SelectPrimitive.Root value={value} onValueChange={setValue}>
+      <SelectPrimitive.Trigger
+        className="inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-mono rounded-tl border-t border-l border-border text-[#1a1e24] hover:opacity-90 transition-opacity outline-none"
         style={{
+          backgroundColor: '#4c566a',
           boxShadow: '-6px -4px 12px -2px rgba(0,0,0,0.5), -2px 0 6px -1px rgba(0,0,0,0.3)'
         }}
       >
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent 
-        side="top" 
-        align="end"
-        sideOffset={0}
-        className="min-w-[120px] max-h-[140px] rounded-tl rounded-tr-none rounded-br-none rounded-bl bg-popover border-border"
-      >
-        {bots.map((bot) => (
-          <SelectItem 
-            key={bot.id} 
-            value={bot.id}
-            className="text-[10px] font-mono py-1.5 px-2 cursor-pointer"
-          >
-            {bot.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+        <SelectPrimitive.Value>
+          {selectedBot?.label}
+        </SelectPrimitive.Value>
+        <SelectPrimitive.Icon>
+          <VscChevronDown className="w-2.5 h-2.5" />
+        </SelectPrimitive.Icon>
+      </SelectPrimitive.Trigger>
+
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Content
+          position="popper"
+          side="top"
+          align="end"
+          sideOffset={0}
+          className="z-50 min-w-[120px] max-h-[140px] overflow-y-auto bg-popover border border-border rounded-tl shadow-lg"
+        >
+          <SelectPrimitive.Viewport className="p-0.5">
+            {bots.map((bot) => (
+              <SelectPrimitive.Item
+                key={bot.id}
+                value={bot.id}
+                className="relative flex items-center px-2 py-1.5 text-[10px] font-mono text-foreground rounded-sm outline-none cursor-pointer select-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
+              >
+                <SelectPrimitive.ItemText>{bot.label}</SelectPrimitive.ItemText>
+              </SelectPrimitive.Item>
+            ))}
+          </SelectPrimitive.Viewport>
+        </SelectPrimitive.Content>
+      </SelectPrimitive.Portal>
+    </SelectPrimitive.Root>
   )
 }
