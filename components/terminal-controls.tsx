@@ -102,6 +102,7 @@ export function TerminalControls() {
         <SlashCommand command="/new" alias="clear" />
         <SlashCommand command="/compact" />
         <SlashCommand command="/branch" alias="fork" />
+        <SlashCommand command="/reload-plugins" />
         
         {/* Rename with input */}
         <div className="flex items-center gap-1 px-1.5 py-1 bg-secondary/30 border-b border-border/80">
