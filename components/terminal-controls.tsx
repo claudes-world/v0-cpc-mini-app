@@ -2,22 +2,23 @@
 
 import { useState } from "react"
 
-// Keychron-style keyboard key colors
+// Keychron-style keyboard key colors - matching the blue-gray slate keys
 const keyStyles = {
-  base: "flex items-center justify-center font-mono text-[10px] font-medium rounded-[4px] border border-[#3a3a3a] bg-gradient-to-b shadow-[0_2px_0_0_#1a1a1a,inset_0_1px_0_0_rgba(255,255,255,0.05)] active:translate-y-[1px] active:shadow-[0_1px_0_0_#1a1a1a,inset_0_1px_0_0_rgba(255,255,255,0.05)] transition-all duration-75",
-  dark: "from-[#2d2d2d] to-[#252525] text-[#9a9a9a]",
-  accent: "from-[#3d3d3d] to-[#333333] text-[#e0e0e0]",
-  orange: "from-[#ff6b35] to-[#e55a2b] text-white border-[#cc4a1f]",
+  base: "flex items-center justify-center font-mono text-[10px] font-medium rounded-[4px] border shadow-[0_2px_0_0_#1a2530,inset_0_1px_0_0_rgba(255,255,255,0.08)] active:translate-y-[1px] active:shadow-[0_1px_0_0_#1a2530,inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-all duration-75",
+  // Blue-gray slate keys (standard keys)
+  slate: "bg-gradient-to-b from-[#4a5568] to-[#3d4a5c] text-[#c8d1dc] border-[#2d3748]",
+  // Coral/salmon red for ESC
+  coral: "bg-gradient-to-b from-[#e85a5a] to-[#d14545] text-[#1a1a1a] border-[#c03030] font-semibold",
 }
 
 interface KeyButtonProps {
   children: React.ReactNode
-  variant?: "dark" | "accent" | "orange"
+  variant?: "slate" | "coral"
   className?: string
   onClick?: () => void
 }
 
-function KeyButton({ children, variant = "dark", className = "", onClick }: KeyButtonProps) {
+function KeyButton({ children, variant = "slate", className = "", onClick }: KeyButtonProps) {
   return (
     <button
       onClick={onClick}
@@ -43,23 +44,19 @@ const sessionColors = [
 interface SlashCommandProps {
   command: string
   alias?: string
-  description: string
   rightContent?: React.ReactNode
   onClick?: () => void
 }
 
-function SlashCommand({ command, alias, description, rightContent, onClick }: SlashCommandProps) {
+function SlashCommand({ command, alias, rightContent, onClick }: SlashCommandProps) {
   return (
     <button
       onClick={onClick}
-      className="w-full flex items-center justify-between px-2 py-1.5 bg-secondary/50 border-b border-border/50 active:bg-accent transition-colors text-left"
+      className="w-full flex items-center justify-between px-2 py-1 bg-secondary/30 border-b border-border/30 active:bg-accent transition-colors text-left"
     >
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <span className="text-primary font-mono text-[11px] font-medium">{command}</span>
-          {alias && <span className="text-muted-foreground text-[9px]">({alias})</span>}
-        </div>
-        <p className="text-muted-foreground text-[9px] leading-tight truncate">{description}</p>
+      <div className="flex items-center gap-1.5">
+        <span className="text-foreground font-mono text-[11px] font-medium">{command}</span>
+        {alias && <span className="text-muted-foreground text-[9px]">({alias})</span>}
       </div>
       {rightContent && <div className="flex-shrink-0 ml-2">{rightContent}</div>}
     </button>
@@ -71,71 +68,54 @@ export function TerminalControls() {
   const [selectedColor, setSelectedColor] = useState("green")
 
   return (
-    <div className="h-full flex flex-col bg-background">
-      {/* Top: Keyboard keys */}
-      <div className="flex items-center gap-1 p-1.5 border-b border-border">
-        <KeyButton variant="accent" className="h-7 px-2">esc</KeyButton>
+    <div className="h-full flex flex-col bg-secondary/20">
+      {/* Pill chips row */}
+      <div className="flex items-center gap-1.5 p-1.5 border-b border-border/50">
+        <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Alpha</span>
+        <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Beta</span>
+        <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Gamma</span>
+      </div>
+
+      {/* Keyboard keys */}
+      <div className="flex items-center gap-1 p-1.5 border-b border-border/50">
+        <KeyButton variant="coral" className="h-7 px-2">esc</KeyButton>
         <KeyButton className="h-7 w-7">1</KeyButton>
         <KeyButton className="h-7 w-7">2</KeyButton>
         <KeyButton className="h-7 w-7">3</KeyButton>
         <div className="flex-1" />
-        <div className="flex items-center gap-0.5">
-          <KeyButton variant="accent" className="h-7 px-1.5 text-[8px]">
-            <span className="flex flex-col items-center leading-none">
-              <span>Shift</span>
-              <span>+Tab</span>
-            </span>
-          </KeyButton>
-        </div>
-        <div className="flex items-center gap-0.5">
-          <KeyButton variant="orange" className="h-7 px-1 text-[8px]">^</KeyButton>
-          <KeyButton variant="orange" className="h-7 px-1.5">C</KeyButton>
-        </div>
+        <KeyButton className="h-7 px-1.5 text-[8px]">
+          <span className="flex items-center gap-0.5">
+            <span>⇧</span>
+            <span>Tab</span>
+          </span>
+        </KeyButton>
+        <KeyButton className="h-7 px-1.5">^C</KeyButton>
       </div>
 
-      {/* Bottom: Slash commands */}
+      {/* Slash commands */}
       <div className="flex-1 overflow-auto scrollbar-hide">
-        <SlashCommand
-          command="/new"
-          alias="clear"
-          description="Start a fresh claude code session."
-        />
-        <SlashCommand
-          command="/compact"
-          description="Compact this session's context."
-        />
-        <SlashCommand
-          command="/branch"
-          alias="fork"
-          description="Branch a new claude session from here."
-        />
+        <SlashCommand command="/new" alias="clear" />
+        <SlashCommand command="/compact" />
+        <SlashCommand command="/branch" alias="fork" />
         
         {/* Rename with input */}
-        <div className="flex items-center px-2 py-1.5 bg-secondary/50 border-b border-border/50">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className="text-primary font-mono text-[11px] font-medium">/rename</span>
-            </div>
-            <p className="text-muted-foreground text-[9px] leading-tight">Name this session.</p>
-          </div>
+        <div className="flex items-center px-2 py-1 bg-secondary/30 border-b border-border/30">
+          <span className="text-foreground font-mono text-[11px] font-medium">/rename</span>
+          <div className="flex-1" />
           <input
             type="text"
             value={sessionName}
             onChange={(e) => setSessionName(e.target.value)}
-            placeholder="Session name..."
-            className="w-24 h-6 px-1.5 text-[16px] bg-input border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            style={{ fontSize: '16px' }} // Explicit 16px to prevent iOS zoom
+            placeholder="name..."
+            className="w-20 h-5 px-1.5 text-[16px] bg-input border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            style={{ fontSize: '16px' }}
           />
         </div>
 
         {/* Color with radio buttons */}
-        <div className="flex items-center px-2 py-1.5 bg-secondary/50 border-b border-border/50">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
-              <span className="text-primary font-mono text-[11px] font-medium">/color</span>
-            </div>
-            <p className="text-muted-foreground text-[9px] leading-tight">Set a color for this session.</p>
-          </div>
+        <div className="flex items-center px-2 py-1 bg-secondary/30 border-b border-border/30">
+          <span className="text-foreground font-mono text-[11px] font-medium">/color</span>
+          <div className="flex-1" />
           <div className="flex items-center gap-1">
             {sessionColors.map((c) => (
               <button

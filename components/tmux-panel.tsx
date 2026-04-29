@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { BotSelector } from "./bot-selector"
 
 const terminalLines = [
   { type: "prompt", content: "user@server:~$", command: " tmux attach -t dev" },
@@ -27,6 +28,11 @@ export function TmuxPanel() {
     <div className="h-full bg-terminal overflow-hidden flex flex-col relative">
       {/* Gradient fade mask at top - fades to 25% opacity */}
       <div className="absolute top-0 left-0 right-0 h-4 bg-gradient-to-b from-terminal/25 to-transparent z-10 pointer-events-none" />
+
+      {/* Bot selector overlay - bottom right */}
+      <div className="absolute bottom-6 right-1 z-20">
+        <BotSelector />
+      </div>
 
       {/* Terminal content */}
       <div className="flex-1 overflow-auto px-0.5 font-mono text-[9px] leading-tight scrollbar-hide">
