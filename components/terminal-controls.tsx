@@ -93,8 +93,8 @@ export function TerminalControls() {
             <span>Tab</span>
           </span>
         </KeyButton>
-        <KeyButton variant="darkBlue" className="h-7 px-1.5">^C</KeyButton>
-        <KeyButton variant="darkBlue" className="h-7 px-1.5">^B</KeyButton>
+        <KeyButton className="h-7 px-1.5">^C</KeyButton>
+        <KeyButton className="h-7 px-1.5">^B</KeyButton>
       </div>
 
       {/* Slash commands */}
