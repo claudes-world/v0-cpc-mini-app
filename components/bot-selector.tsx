@@ -1,7 +1,13 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { VscChevronDown } from "react-icons/vsc"
+import { useState } from "react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const bots = [
   { id: "claude_do_bot", label: "claude_do_bot" },
@@ -14,51 +20,37 @@ const bots = [
 ]
 
 export function BotSelector() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [selected, setSelected] = useState(bots[0])
-  const menuRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+  const [selected, setSelected] = useState(bots[0].id)
 
   return (
-    <div ref={menuRef} className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-mono bg-secondary border-t border-l border-border rounded-tl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+    <Select value={selected} onValueChange={setSelected}>
+      <SelectTrigger
+        className="h-auto px-1.5 py-0.5 text-[9px] font-mono bg-secondary border-t border-l border-r-0 border-b-0 border-border rounded-none rounded-tl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors gap-1 min-w-0 w-auto shadow-none"
         style={{
           boxShadow: '-6px -4px 12px -2px rgba(0,0,0,0.5), -2px 0 6px -1px rgba(0,0,0,0.3)'
         }}
       >
-        <span className="truncate max-w-[90px]">{selected.label}</span>
-        <VscChevronDown className={`w-3 h-3 transition-transform ${isOpen ? "rotate-180" : ""}`} />
-      </button>
-
-      {isOpen && (
-        <div className="absolute bottom-full right-0 mb-0 min-w-[120px] max-h-[120px] overflow-y-auto scrollbar-hide bg-popover border border-border rounded-tl shadow-lg z-50">
-          {bots.map((bot) => (
-            <button
-              key={bot.id}
-              onClick={() => {
-                setSelected(bot)
-                setIsOpen(false)
-              }}
-              className={`w-full px-2 py-1 text-[10px] font-mono text-left hover:bg-accent transition-colors ${
-                selected.id === bot.id ? "bg-accent text-accent-foreground" : "text-foreground"
-              }`}
-            >
-              {bot.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+        <SelectValue>
+          <span className="truncate max-w-[90px]">
+            {bots.find(b => b.id === selected)?.label}
+          </span>
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent
+        side="top"
+        align="end"
+        className="min-w-[140px] rounded-md font-mono"
+      >
+        {bots.map((bot) => (
+          <SelectItem
+            key={bot.id}
+            value={bot.id}
+            className="text-[11px] py-1.5 cursor-pointer"
+          >
+            {bot.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
