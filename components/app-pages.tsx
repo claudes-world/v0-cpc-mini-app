@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse } from "react-icons/vsc"
 import { WebHaptics } from "web-haptics"
+import { ActivityPage } from "./activity/activity-page"
 
 interface Tab {
   id: string
@@ -15,7 +16,10 @@ interface AppPagesProps {
   tabs: Tab[]
 }
 
-const SWIPE_THRESHOLD = 0.25 // 25% of container width
+const DEAD_ZONE = 0.18 // First 18% of drag does nothing
+const COMMIT_THRESHOLD = 0.25 // After dead zone, need another 25% to commit
+const EDGE_DEAD_ZONE = 0.18 // 18% dead zone before edge elastic kicks in
+const EDGE_RESISTANCE = 0.12 // Much stronger resistance at edges (lower = less movement)
 
 export function AppPages({ tabs }: AppPagesProps) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -23,11 +27,13 @@ export function AppPages({ tabs }: AppPagesProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [swipeProgress, setSwipeProgress] = useState(0) // -1 to 1, representing swipe direction and progress
   const [hasPassedThreshold, setHasPassedThreshold] = useState(false)
+  const [isActivelyDragging, setIsActivelyDragging] = useState(false) // True after passing dead zone
   const containerRef = useRef<HTMLDivElement>(null)
   const startXRef = useRef(0)
   const currentXRef = useRef(0)
   const containerWidth = useRef(0)
   const thresholdPassedRef = useRef(false)
+  const deadZonePassedRef = useRef(false)
 
   useEffect(() => {
     if (containerRef.current) {
@@ -42,7 +48,9 @@ export function AppPages({ tabs }: AppPagesProps) {
     startXRef.current = e.touches[0].clientX
     currentXRef.current = 0
     thresholdPassedRef.current = false
+    deadZonePassedRef.current = false
     setIsDragging(true)
+    setIsActivelyDragging(false)
     setSwipeProgress(0)
     setHasPassedThreshold(false)
   }, [])
@@ -50,40 +58,79 @@ export function AppPages({ tabs }: AppPagesProps) {
   const handleTouchMove = useCallback(
     (e: React.TouchEvent) => {
       if (!isDragging) return
-      const diff = e.touches[0].clientX - startXRef.current
-      currentXRef.current = diff
+      const rawDiff = e.touches[0].clientX - startXRef.current
+      
+      // Calculate dead zone threshold
+      const deadZonePixels = containerWidth.current * DEAD_ZONE
+      const commitPixels = containerWidth.current * COMMIT_THRESHOLD
+      
+      // Check if we've passed the dead zone
+      const canSwipeLeft = activeIndex < tabs.length - 1 && rawDiff < 0
+      const canSwipeRight = activeIndex > 0 && rawDiff > 0
+      const canSwipe = canSwipeLeft || canSwipeRight
+      
+      // Track when we pass dead zone
+      if (Math.abs(rawDiff) > deadZonePixels && canSwipe && !deadZonePassedRef.current) {
+        deadZonePassedRef.current = true
+        setIsActivelyDragging(true)
+        WebHaptics.vibrate({ duration: 10, intensity: 0.5 })
+      }
+      
+      // Calculate effective diff (subtracting dead zone)
+      let effectiveDiff = 0
+      if (deadZonePassedRef.current) {
+        // Once past dead zone, calculate movement from that point
+        const sign = rawDiff > 0 ? 1 : -1
+        effectiveDiff = sign * (Math.abs(rawDiff) - deadZonePixels)
+      }
+      
+      currentXRef.current = effectiveDiff
 
-      // Calculate swipe progress for underline animation
-      const progress = diff / containerWidth.current
+      // Calculate swipe progress for underline animation (based on effective diff)
+      const progress = effectiveDiff / containerWidth.current
       setSwipeProgress(Math.max(-1, Math.min(1, progress)))
 
-      // Check threshold and trigger haptics
-      const threshold = containerWidth.current * SWIPE_THRESHOLD
-      const canSwipeLeft = activeIndex < tabs.length - 1 && diff < 0
-      const canSwipeRight = activeIndex > 0 && diff > 0
-      const isOverThreshold = Math.abs(diff) > threshold && (canSwipeLeft || canSwipeRight)
+      // Check commit threshold (based on effective diff after dead zone)
+      const isOverCommitThreshold = Math.abs(effectiveDiff) > commitPixels && canSwipe
 
-      if (isOverThreshold && !thresholdPassedRef.current) {
-        // Just passed threshold - trigger haptic
+      if (isOverCommitThreshold && !thresholdPassedRef.current) {
+        // Just passed commit threshold - trigger haptic
         thresholdPassedRef.current = true
         setHasPassedThreshold(true)
         WebHaptics.vibrate({ duration: 15, intensity: 0.8 })
-      } else if (!isOverThreshold && thresholdPassedRef.current) {
-        // Went back below threshold - trigger softer haptic
+      } else if (!isOverCommitThreshold && thresholdPassedRef.current) {
+        // Went back below commit threshold - trigger softer haptic
         thresholdPassedRef.current = false
         setHasPassedThreshold(false)
         WebHaptics.vibrate({ duration: 10, intensity: 0.4 })
       }
 
-      // Add resistance at edges
+      // Calculate visual translation
       const baseOffset = -activeIndex * containerWidth.current
-      let newTranslate = baseOffset + diff
+      let newTranslate = baseOffset + effectiveDiff
 
-      // Resistance at edges
-      if (activeIndex === 0 && diff > 0) {
-        newTranslate = baseOffset + diff * 0.3
-      } else if (activeIndex === tabs.length - 1 && diff < 0) {
-        newTranslate = baseOffset + diff * 0.3
+      // Resistance at edges (when trying to swipe beyond first/last)
+      // Apply dead zone + heavy damping to prevent wiggle
+      if (activeIndex === 0 && rawDiff > 0) {
+        const edgeDeadZonePixels = containerWidth.current * EDGE_DEAD_ZONE
+        if (rawDiff > edgeDeadZonePixels) {
+          // Only move after dead zone, with heavy resistance
+          const edgeDiff = rawDiff - edgeDeadZonePixels
+          newTranslate = baseOffset + edgeDiff * EDGE_RESISTANCE
+        } else {
+          // Within dead zone - no movement
+          newTranslate = baseOffset
+        }
+      } else if (activeIndex === tabs.length - 1 && rawDiff < 0) {
+        const edgeDeadZonePixels = containerWidth.current * EDGE_DEAD_ZONE
+        if (Math.abs(rawDiff) > edgeDeadZonePixels) {
+          // Only move after dead zone, with heavy resistance
+          const edgeDiff = rawDiff + edgeDeadZonePixels
+          newTranslate = baseOffset + edgeDiff * EDGE_RESISTANCE
+        } else {
+          // Within dead zone - no movement
+          newTranslate = baseOffset
+        }
       }
 
       setTranslateX(newTranslate)
@@ -93,15 +140,18 @@ export function AppPages({ tabs }: AppPagesProps) {
 
   const handleTouchEnd = useCallback(() => {
     setIsDragging(false)
+    setIsActivelyDragging(false)
     setSwipeProgress(0)
     setHasPassedThreshold(false)
-    const threshold = containerWidth.current * SWIPE_THRESHOLD
-    const diff = currentXRef.current
+    
+    // Commit threshold is based on effective diff (after dead zone)
+    const commitPixels = containerWidth.current * COMMIT_THRESHOLD
+    const effectiveDiff = currentXRef.current
 
     let newIndex = activeIndex
-    if (diff < -threshold && activeIndex < tabs.length - 1) {
+    if (effectiveDiff < -commitPixels && activeIndex < tabs.length - 1) {
       newIndex = activeIndex + 1
-    } else if (diff > threshold && activeIndex > 0) {
+    } else if (effectiveDiff > commitPixels && activeIndex > 0) {
       newIndex = activeIndex - 1
     }
 
@@ -359,15 +409,9 @@ export const defaultTabs: Tab[] = [
     content: <FilesTab />,
   },
   {
-    id: "issues",
-    label: "Issues",
-    icon: <VscIssues />,
-    content: <IssuesTab />,
-  },
-  {
-    id: "prs",
-    label: "PRs",
-    icon: <VscGitPullRequest />,
-    content: <PRsTab />,
+    id: "activity",
+    label: "Activity",
+    icon: <VscPulse />,
+    content: <ActivityPage />,
   },
 ]

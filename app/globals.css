@@ -39,49 +39,58 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-/* Nord Theme - https://www.nordtheme.com */
+/* Nord Theme - https://www.nordtheme.com
+   Polar Night: nord0 #2e3440, nord1 #3b4252, nord2 #434c5e, nord3 #4c566a
+   Snow Storm: nord4 #d8dee9, nord5 #e5e9f0, nord6 #eceff4
+   Frost: nord7 #8fbcbb, nord8 #88c0d0, nord9 #81a1c1, nord10 #5e81ac
+   Aurora: nord11 #bf616a, nord12 #d08770, nord13 #ebcb8b, nord14 #a3be8c, nord15 #b48ead
+*/
 .dark {
-  /* Polar Night - backgrounds */
-  --background: #2e3440;
-  --foreground: #eceff4;
-  --card: #3b4252;
-  --card-foreground: #eceff4;
-  --popover: #3b4252;
-  --popover-foreground: #eceff4;
+  /* Polar Night - backgrounds (darkened ~0.06-0.08 from standard Nord) */
+  --background: oklch(0.20 0.02 240);
+  --foreground: oklch(0.93 0.01 230);
+  --card: oklch(0.24 0.02 240);
+  --card-foreground: oklch(0.93 0.01 230);
+  --popover: oklch(0.24 0.02 240);
+  --popover-foreground: oklch(0.93 0.01 230);
   /* Frost - primary accent (nord8 - bright cyan) */
-  --primary: #88c0d0;
-  --primary-foreground: #2e3440;
-  /* Polar Night - secondary */
-  --secondary: #434c5e;
-  --secondary-foreground: #d8dee9;
-  --muted: #434c5e;
-  --muted-foreground: #d8dee9;
-  --accent: #4c566a;
-  --accent-foreground: #eceff4;
+  --primary: oklch(0.76 0.08 200);
+  --primary-foreground: oklch(0.20 0.02 240);
+  /* Polar Night - secondary (darkened) */
+  --secondary: oklch(0.30 0.02 240);
+  --secondary-foreground: oklch(0.87 0.01 230);
+  /* muted */
+  --muted: oklch(0.30 0.02 240);
+  --muted-foreground: oklch(0.60 0.02 230);
+  /* accent */
+  --accent: oklch(0.35 0.02 240);
+  --accent-foreground: oklch(0.93 0.01 230);
   /* Aurora - destructive (nord11 - red) */
-  --destructive: #bf616a;
-  --destructive-foreground: #eceff4;
-  --border: #4c566a;
-  --input: #3b4252;
-  --ring: #88c0d0;
+  --destructive: oklch(0.58 0.15 15);
+  --destructive-foreground: oklch(0.93 0.01 230);
+  /* borders */
+  --border: oklch(0.35 0.02 240);
+  --input: oklch(0.24 0.02 240);
+  --ring: oklch(0.76 0.08 200);
   /* Aurora colors for charts */
-  --chart-1: #88c0d0;
-  --chart-2: #81a1c1;
-  --chart-3: #5e81ac;
-  --chart-4: #a3be8c;
-  --chart-5: #ebcb8b;
-  --sidebar: #3b4252;
-  --sidebar-foreground: #eceff4;
-  --sidebar-primary: #88c0d0;
-  --sidebar-primary-foreground: #2e3440;
-  --sidebar-accent: #434c5e;
-  --sidebar-accent-foreground: #eceff4;
-  --sidebar-border: #4c566a;
-  --sidebar-ring: #88c0d0;
-  /* Terminal colors */
-  --terminal: #2e3440;
-  --terminal-foreground: #a3be8c;
-  --terminal-muted: #4c566a;
+  --chart-1: oklch(0.76 0.08 200);
+  --chart-2: oklch(0.68 0.08 230);
+  --chart-3: oklch(0.55 0.10 250);
+  --chart-4: oklch(0.72 0.12 140);
+  --chart-5: oklch(0.82 0.12 90);
+  /* Sidebar */
+  --sidebar: oklch(0.24 0.02 240);
+  --sidebar-foreground: oklch(0.93 0.01 230);
+  --sidebar-primary: oklch(0.76 0.08 200);
+  --sidebar-primary-foreground: oklch(0.20 0.02 240);
+  --sidebar-accent: oklch(0.30 0.02 240);
+  --sidebar-accent-foreground: oklch(0.93 0.01 230);
+  --sidebar-border: oklch(0.35 0.02 240);
+  --sidebar-ring: oklch(0.76 0.08 200);
+  /* Terminal - darkest shade with nord14 green text */
+  --terminal: oklch(0.18 0.02 240);
+  --terminal-foreground: oklch(0.72 0.12 140);
+  --terminal-muted: oklch(0.35 0.02 240);
 }
 
 @theme inline {
