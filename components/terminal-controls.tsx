@@ -57,7 +57,7 @@ function SlashCommand({ command, alias, rightContent, onClick }: SlashCommandPro
       className="w-full flex items-center justify-between px-2 py-1 bg-secondary/30 border-b border-border/80 active:bg-accent transition-colors text-left"
     >
       <div className="flex items-center gap-1.5">
-        <span className="text-foreground font-mono text-[11px] font-medium">{command}</span>
+        <span className="text-[#81a1c1] font-mono text-[11px] font-medium">{command}</span>
         {alias && <span className="text-muted-foreground text-[9px]">({alias})</span>}
       </div>
       {rightContent && <div className="flex-shrink-0 ml-2">{rightContent}</div>}
@@ -106,7 +106,7 @@ export function TerminalControls() {
         
         {/* Rename with input */}
         <div className="flex items-center gap-1 px-2 py-1 bg-secondary/30 border-b border-border/80">
-          <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
+          <span className="text-[#81a1c1] font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
           <input
             type="text"
             value={sessionName}
@@ -119,7 +119,7 @@ export function TerminalControls() {
 
         {/* Color with radio buttons */}
         <div className="flex items-center gap-3 px-2 py-1 bg-secondary/30 border-b border-border/80">
-          <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/color</span>
+          <span className="text-[#81a1c1] font-mono text-[11px] font-medium flex-shrink-0">/color</span>
           <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
             <div className="flex items-center gap-1">
               {sessionColors.map((c) => (
