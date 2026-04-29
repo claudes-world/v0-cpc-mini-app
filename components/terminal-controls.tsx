@@ -105,7 +105,7 @@ export function TerminalControls() {
         <SlashCommand command="/reload-plugins" />
         
         {/* Rename with input */}
-        <div className="flex items-center gap-1 px-1.5 py-1 bg-secondary/30 border-b border-border/80">
+        <div className="flex items-center gap-1 px-2 py-1 bg-secondary/30 border-b border-border/80">
           <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
           <input
             type="text"
