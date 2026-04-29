@@ -118,22 +118,23 @@ export function TerminalControls() {
         </div>
 
         {/* Color with radio buttons */}
-        <div className="flex items-center px-2 py-1 bg-secondary/30 border-b border-border/80">
-          <span className="text-foreground font-mono text-[11px] font-medium">/color</span>
-          <div className="flex-1" />
-          <div className="flex items-center gap-1">
-            {sessionColors.map((c) => (
-              <button
-                key={c.id}
-                onClick={() => setSelectedColor(c.id)}
-                className={`w-4 h-4 rounded-sm ${c.color} ${
-                  selectedColor === c.id 
-                    ? "ring-1 ring-white ring-offset-1 ring-offset-background" 
-                    : "opacity-60 hover:opacity-100"
-                } transition-all`}
-                aria-label={`Select ${c.id} color`}
-              />
-            ))}
+        <div className="flex items-center gap-3 px-2 py-1 bg-secondary/30 border-b border-border/80">
+          <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/color</span>
+          <div className="flex-1 min-w-0 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1">
+              {sessionColors.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setSelectedColor(c.id)}
+                  className={`w-4 h-4 flex-shrink-0 rounded-sm ${c.color} ${
+                    selectedColor === c.id 
+                      ? "ring-1 ring-white ring-offset-1 ring-offset-background" 
+                      : "opacity-60 hover:opacity-100"
+                  } transition-all`}
+                  aria-label={`Select ${c.id} color`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
