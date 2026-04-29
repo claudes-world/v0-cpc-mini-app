@@ -19,7 +19,7 @@ function OrgItem({ org, isActive, isSelected, onToggle }: OrgItemProps) {
   return (
     <button
       onClick={onToggle}
-      className={`w-full flex items-center gap-1.5 px-1.5 py-1 text-[10px] font-mono text-left transition-colors border-b border-border/30 ${
+      className={`w-full flex items-center gap-1.5 pl-0 pr-1.5 py-1 text-[10px] font-mono text-left transition-colors border-t border-b border-border/40 ${
         isActive 
           ? 'bg-accent/50 text-foreground' 
           : 'text-muted-foreground'
