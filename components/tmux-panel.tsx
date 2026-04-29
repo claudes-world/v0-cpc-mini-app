@@ -60,8 +60,8 @@ export function TmuxPanel() {
               <span
                 className={
                   line.isModified
-                    ? "text-yellow-400"
-                    : "text-terminal-muted"
+                    ? "text-[#ebcb8b]"
+                    : "text-[#d8dee9]"
                 }
               >
                 {line.content}

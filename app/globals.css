@@ -39,42 +39,49 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
+/* Nord Theme - https://www.nordtheme.com */
 .dark {
-  --background: oklch(0.09 0 0);
-  --foreground: oklch(0.92 0 0);
-  --card: oklch(0.12 0 0);
-  --card-foreground: oklch(0.92 0 0);
-  --popover: oklch(0.14 0 0);
-  --popover-foreground: oklch(0.92 0 0);
-  --primary: oklch(0.65 0.18 145);
-  --primary-foreground: oklch(0.09 0 0);
-  --secondary: oklch(0.18 0 0);
-  --secondary-foreground: oklch(0.85 0 0);
-  --muted: oklch(0.18 0 0);
-  --muted-foreground: oklch(0.55 0 0);
-  --accent: oklch(0.22 0 0);
-  --accent-foreground: oklch(0.92 0 0);
-  --destructive: oklch(0.55 0.2 25);
-  --destructive-foreground: oklch(0.95 0 0);
-  --border: oklch(0.22 0 0);
-  --input: oklch(0.18 0 0);
-  --ring: oklch(0.65 0.18 145);
-  --chart-1: oklch(0.65 0.18 145);
-  --chart-2: oklch(0.65 0.15 200);
-  --chart-3: oklch(0.65 0.15 280);
-  --chart-4: oklch(0.75 0.15 80);
-  --chart-5: oklch(0.60 0.20 30);
-  --sidebar: oklch(0.12 0 0);
-  --sidebar-foreground: oklch(0.92 0 0);
-  --sidebar-primary: oklch(0.65 0.18 145);
-  --sidebar-primary-foreground: oklch(0.09 0 0);
-  --sidebar-accent: oklch(0.18 0 0);
-  --sidebar-accent-foreground: oklch(0.92 0 0);
-  --sidebar-border: oklch(0.22 0 0);
-  --sidebar-ring: oklch(0.65 0.18 145);
-  --terminal: oklch(0.08 0 0);
-  --terminal-foreground: oklch(0.65 0.18 145);
-  --terminal-muted: oklch(0.45 0 0);
+  /* Polar Night - backgrounds */
+  --background: #2e3440;
+  --foreground: #eceff4;
+  --card: #3b4252;
+  --card-foreground: #eceff4;
+  --popover: #3b4252;
+  --popover-foreground: #eceff4;
+  /* Frost - primary accent (nord8 - bright cyan) */
+  --primary: #88c0d0;
+  --primary-foreground: #2e3440;
+  /* Polar Night - secondary */
+  --secondary: #434c5e;
+  --secondary-foreground: #d8dee9;
+  --muted: #434c5e;
+  --muted-foreground: #d8dee9;
+  --accent: #4c566a;
+  --accent-foreground: #eceff4;
+  /* Aurora - destructive (nord11 - red) */
+  --destructive: #bf616a;
+  --destructive-foreground: #eceff4;
+  --border: #4c566a;
+  --input: #3b4252;
+  --ring: #88c0d0;
+  /* Aurora colors for charts */
+  --chart-1: #88c0d0;
+  --chart-2: #81a1c1;
+  --chart-3: #5e81ac;
+  --chart-4: #a3be8c;
+  --chart-5: #ebcb8b;
+  --sidebar: #3b4252;
+  --sidebar-foreground: #eceff4;
+  --sidebar-primary: #88c0d0;
+  --sidebar-primary-foreground: #2e3440;
+  --sidebar-accent: #434c5e;
+  --sidebar-accent-foreground: #eceff4;
+  --sidebar-border: #4c566a;
+  --sidebar-ring: #88c0d0;
+  /* Terminal colors */
+  --terminal: #2e3440;
+  --terminal-foreground: #a3be8c;
+  --terminal-muted: #4c566a;
 }
 
 @theme inline {

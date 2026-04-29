@@ -39,7 +39,7 @@ export function BotSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full right-0 mt-0 min-w-[120px] bg-popover border border-border rounded-bl rounded-tl shadow-lg overflow-hidden z-50">
+        <div className="absolute bottom-full right-0 mb-0 min-w-[120px] max-h-[120px] overflow-y-auto scrollbar-hide bg-popover border border-border rounded-tl shadow-lg z-50">
           {bots.map((bot) => (
             <button
               key={bot.id}

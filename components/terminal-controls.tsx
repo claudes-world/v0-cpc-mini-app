@@ -2,13 +2,13 @@
 
 import { useState } from "react"
 
-// Keychron-style keyboard key colors - matching the blue-gray slate keys
+// Nord-themed keyboard key colors
 const keyStyles = {
-  base: "flex items-center justify-center font-mono text-[10px] font-medium rounded-[4px] border shadow-[0_2px_0_0_#1a2530,inset_0_1px_0_0_rgba(255,255,255,0.08)] active:translate-y-[1px] active:shadow-[0_1px_0_0_#1a2530,inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-all duration-75",
-  // Blue-gray slate keys (standard keys)
-  slate: "bg-gradient-to-b from-[#4a5568] to-[#3d4a5c] text-[#c8d1dc] border-[#2d3748]",
-  // Coral/salmon red for ESC
-  coral: "bg-gradient-to-b from-[#e85a5a] to-[#d14545] text-[#1a1a1a] border-[#c03030] font-semibold",
+  base: "flex items-center justify-center font-mono text-[10px] font-medium rounded-[4px] border shadow-[0_2px_0_0_#2e3440,inset_0_1px_0_0_rgba(255,255,255,0.08)] active:translate-y-[1px] active:shadow-[0_1px_0_0_#2e3440,inset_0_1px_0_0_rgba(255,255,255,0.08)] transition-all duration-75",
+  // Nord Polar Night keys (nord3 -> nord2)
+  slate: "bg-gradient-to-b from-[#4c566a] to-[#434c5e] text-[#d8dee9] border-[#3b4252]",
+  // Nord Aurora red for ESC (nord11)
+  coral: "bg-gradient-to-b from-[#bf616a] to-[#a54e56] text-[#eceff4] border-[#8b4049] font-semibold",
 }
 
 interface KeyButtonProps {
@@ -99,14 +99,14 @@ export function TerminalControls() {
         <SlashCommand command="/branch" alias="fork" />
         
         {/* Rename with input */}
-        <div className="flex items-center gap-2 px-2 py-1 bg-secondary/30 border-b border-border/30">
+        <div className="flex items-center gap-1 px-1.5 py-1 bg-secondary/30 border-b border-border/30">
           <span className="text-foreground font-mono text-[11px] font-medium flex-shrink-0">/rename</span>
           <input
             type="text"
             value={sessionName}
             onChange={(e) => setSessionName(e.target.value)}
             placeholder="name..."
-            className="flex-1 min-w-0 h-5 px-1.5 text-[16px] bg-input border border-border rounded text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            className="flex-1 min-w-0 h-5 px-1 text-[16px] bg-input border border-border rounded text-foreground placeholder:text-muted-foreground placeholder:text-[9px] focus:outline-none focus:ring-1 focus:ring-ring"
             style={{ fontSize: '16px' }}
           />
         </div>
