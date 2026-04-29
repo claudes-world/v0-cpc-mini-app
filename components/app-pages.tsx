@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest, VscPulse } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink } from "react-icons/vsc"
 import { WebHaptics } from "web-haptics"
 import { ActivityPage } from "./activity/activity-page"
 
@@ -400,6 +400,19 @@ export function PRsTab() {
   )
 }
 
+export function LinksTab() {
+  return (
+    <div className="p-2">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2 px-1">
+        Links
+      </div>
+      <div className="flex items-center justify-center h-32 text-muted-foreground text-xs">
+        No links yet
+      </div>
+    </div>
+  )
+}
+
 // Default tabs export
 export const defaultTabs: Tab[] = [
   {
@@ -413,5 +426,11 @@ export const defaultTabs: Tab[] = [
     label: "Activity",
     icon: <VscPulse />,
     content: <ActivityPage />,
+  },
+  {
+    id: "links",
+    label: "Links",
+    icon: <VscLink />,
+    content: <LinksTab />,
   },
 ]

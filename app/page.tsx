@@ -6,7 +6,7 @@ import { TerminalControls } from "@/components/terminal-controls"
 import { AppPages, defaultTabs } from "@/components/app-pages"
 import { ActionBar } from "@/components/action-bar"
 import { NotificationStatusLine } from "@/components/notification-status-line"
-import { TerminalResizeHandle, SNAP_POINTS } from "@/components/bot-selector"
+import { DraggableBotSelector, SNAP_POINTS } from "@/components/bot-selector"
 
 export default function Home() {
   const [terminalHeight, setTerminalHeight] = useState(33)
@@ -43,7 +43,7 @@ export default function Home() {
         <div className="w-1/2 border-r border-border">
           <TmuxPanel 
             resizeHandle={
-              <TerminalResizeHandle
+              <DraggableBotSelector
                 terminalHeight={terminalHeight}
                 onHeightChange={(h) => {
                   // During drag, update immediately without transition
