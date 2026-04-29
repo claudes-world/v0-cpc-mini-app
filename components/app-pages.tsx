@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened } from "react-icons/vsc"
+import { FileIcon } from "./file-icon"
 import { WebHaptics } from "web-haptics"
 import { ActivityPage } from "./activity/activity-page"
 
@@ -282,7 +283,11 @@ export function FilesTab() {
             key={i}
             className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent active:bg-accent/80 transition-colors"
           >
-            <VscFiles className="w-3.5 h-3.5 text-muted-foreground" />
+            {file.type === "folder" ? (
+              <VscFolder className="w-3.5 h-3.5 text-muted-foreground" />
+            ) : (
+              <FileIcon filename={file.name} size={14} />
+            )}
             <span className="text-xs flex-1">{file.name}</span>
             {file.modified && (
               <span className="w-1.5 h-1.5 rounded-full bg-yellow-400" />
