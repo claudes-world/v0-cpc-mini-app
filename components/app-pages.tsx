@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse } from "react-icons/vsc"
 import { WebHaptics } from "web-haptics"
+import { ActivityPage } from "./activity/activity-page"
 
 interface Tab {
   id: string
@@ -359,15 +360,9 @@ export const defaultTabs: Tab[] = [
     content: <FilesTab />,
   },
   {
-    id: "issues",
-    label: "Issues",
-    icon: <VscIssues />,
-    content: <IssuesTab />,
-  },
-  {
-    id: "prs",
-    label: "PRs",
-    icon: <VscGitPullRequest />,
-    content: <PRsTab />,
+    id: "activity",
+    label: "Activity",
+    icon: <VscPulse />,
+    content: <ActivityPage />,
   },
 ]
