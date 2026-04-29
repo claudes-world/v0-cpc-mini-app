@@ -50,15 +50,17 @@ export function PRFilters() {
   }
   
   return (
-    <div className="flex items-center gap-1 px-2 py-1">
-      {prTypes.map(({ value, label }) => (
-        <FilterPill
-          key={value}
-          label={label}
-          isActive={value === 'all' ? types.length === 0 : types.includes(value as PRType)}
-          onClick={() => handleToggle(value)}
-        />
-      ))}
+    <div className="overflow-x-auto scrollbar-hide touch-pan-x">
+      <div className="flex items-center gap-1 px-2 py-1 min-w-max">
+        {prTypes.map(({ value, label }) => (
+          <FilterPill
+            key={value}
+            label={label}
+            isActive={value === 'all' ? types.length === 0 : types.includes(value as PRType)}
+            onClick={() => handleToggle(value)}
+          />
+        ))}
+      </div>
     </div>
   )
 }
@@ -96,9 +98,8 @@ export function IssueFilters() {
   }
   
   return (
-    <div className="flex flex-col gap-1 px-2 py-1">
-      {/* View mode toggle */}
-      <div className="flex items-center gap-1">
+    <div className="overflow-x-auto scrollbar-hide touch-pan-x">
+      <div className="flex items-center gap-1 px-2 py-1 min-w-max">
         {viewModes.map(({ value, label }) => (
           <FilterPill
             key={value}
@@ -107,7 +108,7 @@ export function IssueFilters() {
             onClick={toggleMilestoneView}
           />
         ))}
-        <span className="text-muted-foreground text-[8px] mx-1">|</span>
+        <span className="text-muted-foreground text-[8px] mx-1 flex-shrink-0">|</span>
         {/* Type filters */}
         {issueTypes.map(({ value, label }) => (
           <FilterPill
