@@ -16,8 +16,10 @@ interface AppPagesProps {
   tabs: Tab[]
 }
 
-const DEAD_ZONE = 0.25 // First 25% of drag does nothing
+const DEAD_ZONE = 0.18 // First 18% of drag does nothing
 const COMMIT_THRESHOLD = 0.25 // After dead zone, need another 25% to commit
+const EDGE_DEAD_ZONE = 0.18 // 18% dead zone before edge elastic kicks in
+const EDGE_RESISTANCE = 0.12 // Much stronger resistance at edges (lower = less movement)
 
 export function AppPages({ tabs }: AppPagesProps) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -108,10 +110,27 @@ export function AppPages({ tabs }: AppPagesProps) {
       let newTranslate = baseOffset + effectiveDiff
 
       // Resistance at edges (when trying to swipe beyond first/last)
+      // Apply dead zone + heavy damping to prevent wiggle
       if (activeIndex === 0 && rawDiff > 0) {
-        newTranslate = baseOffset + rawDiff * 0.2
+        const edgeDeadZonePixels = containerWidth.current * EDGE_DEAD_ZONE
+        if (rawDiff > edgeDeadZonePixels) {
+          // Only move after dead zone, with heavy resistance
+          const edgeDiff = rawDiff - edgeDeadZonePixels
+          newTranslate = baseOffset + edgeDiff * EDGE_RESISTANCE
+        } else {
+          // Within dead zone - no movement
+          newTranslate = baseOffset
+        }
       } else if (activeIndex === tabs.length - 1 && rawDiff < 0) {
-        newTranslate = baseOffset + rawDiff * 0.2
+        const edgeDeadZonePixels = containerWidth.current * EDGE_DEAD_ZONE
+        if (Math.abs(rawDiff) > edgeDeadZonePixels) {
+          // Only move after dead zone, with heavy resistance
+          const edgeDiff = rawDiff + edgeDeadZonePixels
+          newTranslate = baseOffset + edgeDiff * EDGE_RESISTANCE
+        } else {
+          // Within dead zone - no movement
+          newTranslate = baseOffset
+        }
       }
 
       setTranslateX(newTranslate)
