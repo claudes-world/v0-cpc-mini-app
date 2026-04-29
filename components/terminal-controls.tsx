@@ -82,7 +82,6 @@ export function TerminalControls() {
         <KeyButton className="h-7 w-7">1</KeyButton>
         <KeyButton className="h-7 w-7">2</KeyButton>
         <KeyButton className="h-7 w-7">3</KeyButton>
-        <div className="flex-1" />
         <KeyButton className="h-7 px-1.5 text-[8px]">
           <span className="flex items-center gap-0.5">
             <span>⇧</span>
