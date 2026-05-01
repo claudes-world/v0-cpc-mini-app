@@ -1,10 +1,11 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened, VscBook } from "react-icons/vsc"
 import { FileIcon } from "./file-icon"
 import { WebHaptics } from "web-haptics"
 import { ActivityPage } from "./activity/activity-page"
+import { AgentsMdPage } from "./agents-md/agents-md-page"
 
 // Safe haptics wrapper - vibrate might not be available in all environments
 const vibrate = (options: { duration: number; intensity: number }) => {
@@ -448,5 +449,11 @@ export const defaultTabs: Tab[] = [
     label: "Links",
     icon: <VscLink />,
     content: <LinksTab />,
+  },
+  {
+    id: "agents",
+    label: "AGENTS.md",
+    icon: <VscBook />,
+    content: <AgentsMdPage />,
   },
 ]
