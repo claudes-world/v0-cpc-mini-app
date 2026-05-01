@@ -1,19 +1,63 @@
 "use client"
 
-import { useState, useMemo, useRef, useCallback } from "react"
+import { useState, useMemo, useRef, useCallback, useEffect } from "react"
 import { VscListTree, VscChevronDown, VscChevronRight } from "react-icons/vsc"
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { AGENTS_MD_CONTENT, AGENTS_MD_PATH } from "@/lib/data/agents-md-content"
+import { 
+  AGENTS_MD_CONTENT, 
+  AGENTS_MD_PATH,
+  CLAUDE_MD_CONTENT,
+  CLAUDE_MD_PATH
+} from "@/lib/data/agents-md-content"
 
 type ViewMode = "preview" | "markdown"
+type FileMode = "claude" | "agents"
 
 interface TocItem {
   level: number
   text: string
   id: string
+}
+
+// Custom toggle button group with floating pill style
+function PillToggle<T extends string>({ 
+  value, 
+  onChange, 
+  options 
+}: { 
+  value: T
+  onChange: (value: T) => void
+  options: { value: T; label: string }[]
+}) {
+  const activeIndex = options.findIndex(opt => opt.value === value)
+  
+  return (
+    <div className="relative flex h-6 rounded-md bg-muted/60 p-0.5">
+      {/* Sliding background pill */}
+      <div 
+        className="absolute top-0.5 bottom-0.5 rounded-[5px] bg-background shadow-sm transition-all duration-200 ease-out border border-border/50"
+        style={{ 
+          width: `calc(${100 / options.length}% - 2px)`,
+          left: `calc(${activeIndex * (100 / options.length)}% + 1px)`
+        }}
+      />
+      {options.map((option) => (
+        <button
+          key={option.value}
+          onClick={() => onChange(option.value)}
+          className={`relative z-10 px-2.5 text-[10px] font-medium transition-colors duration-150 ${
+            value === option.value 
+              ? "text-foreground" 
+              : "text-muted-foreground hover:text-foreground/70"
+          }`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
 }
 
 // Parse markdown to extract headers for ToC
@@ -142,17 +186,15 @@ function renderMarkdownContent(lines: string[]): React.ReactNode {
   const elements: React.ReactNode[] = []
   let inCodeBlock = false
   let codeLines: string[] = []
-  let codeLanguage = ''
   
   lines.forEach((line, index) => {
     if (line.startsWith('```')) {
       if (!inCodeBlock) {
         inCodeBlock = true
-        codeLanguage = line.slice(3)
         codeLines = []
       } else {
         elements.push(
-          <pre key={`code-${index}`} className="bg-terminal text-terminal-foreground p-3 rounded-md text-xs font-mono overflow-x-auto my-2">
+          <pre key={`code-${index}`} className="bg-terminal text-terminal-foreground p-2 rounded-md text-xs font-mono overflow-x-auto my-1">
             <code>{codeLines.join('\n')}</code>
           </pre>
         )
@@ -167,7 +209,7 @@ function renderMarkdownContent(lines: string[]): React.ReactNode {
     }
     
     if (line.trim() === '') {
-      elements.push(<div key={index} className="h-2" />)
+      elements.push(<div key={index} className="h-1" />)
       return
     }
     
@@ -184,7 +226,7 @@ function renderMarkdownContent(lines: string[]): React.ReactNode {
     
     // Regular paragraph
     elements.push(
-      <p key={index} className="text-xs text-foreground/90 leading-relaxed">
+      <p key={index} className="text-xs text-foreground/90 leading-snug">
         {renderInlineMarkdown(line)}
       </p>
     )
@@ -256,7 +298,7 @@ function CollapsibleSection({ section, defaultOpen = true }: { section: Section;
   
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className={paddingClass}>
-      <CollapsibleTrigger className="flex items-center gap-1.5 w-full py-1.5 hover:bg-accent/50 rounded px-1.5 transition-colors">
+      <CollapsibleTrigger className="flex items-center gap-1 w-full py-0.5 hover:bg-accent/50 rounded px-1 transition-colors">
         {isOpen ? (
           <VscChevronDown className="w-3 h-3 text-muted-foreground shrink-0" />
         ) : (
@@ -267,7 +309,7 @@ function CollapsibleSection({ section, defaultOpen = true }: { section: Section;
         </span>
       </CollapsibleTrigger>
       <CollapsibleContent className="pl-4 pr-1">
-        <div className="py-1 space-y-1">
+        <div className="py-0.5 space-y-0.5">
           {renderMarkdownContent(section.content)}
         </div>
         {section.children.map((child, index) => (
@@ -287,12 +329,12 @@ function TableOfContents({
   onSelect: (id: string) => void 
 }) {
   return (
-    <div className="space-y-1">
+    <div className="space-y-0.5">
       {headers.map((header, index) => (
         <button
           key={index}
           onClick={() => onSelect(header.id)}
-          className={`block w-full text-left text-xs py-1.5 px-2 rounded hover:bg-accent transition-colors ${
+          className={`block w-full text-left text-xs py-1 px-2 rounded hover:bg-accent transition-colors ${
             header.level === 1 
               ? "font-semibold text-foreground" 
               : header.level === 2 
@@ -309,12 +351,35 @@ function TableOfContents({
 
 export function AgentsMdPage() {
   const [viewMode, setViewMode] = useState<ViewMode>("preview")
+  const [fileMode, setFileMode] = useState<FileMode>("claude")
   const [tocOpen, setTocOpen] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
+  const [showFab, setShowFab] = useState(true)
+  const lastScrollY = useRef(0)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   
-  const headers = useMemo(() => parseHeaders(AGENTS_MD_CONTENT), [])
-  const sections = useMemo(() => parseMarkdownSections(AGENTS_MD_CONTENT), [])
-  const highlightedLines = useMemo(() => highlightMarkdown(AGENTS_MD_CONTENT), [])
+  // Get current content based on file mode
+  const currentContent = fileMode === "claude" ? CLAUDE_MD_CONTENT : AGENTS_MD_CONTENT
+  const currentPath = fileMode === "claude" ? CLAUDE_MD_PATH : AGENTS_MD_PATH
+  const currentFileName = fileMode === "claude" ? "CLAUDE.md" : "AGENTS.md"
+  
+  const headers = useMemo(() => parseHeaders(currentContent), [currentContent])
+  const sections = useMemo(() => parseMarkdownSections(currentContent), [currentContent])
+  const highlightedLines = useMemo(() => highlightMarkdown(currentContent), [currentContent])
+  
+  // Handle scroll to show/hide FAB
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const currentScrollY = e.currentTarget.scrollTop
+    
+    if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
+      // Scrolling down
+      setShowFab(false)
+    } else {
+      // Scrolling up
+      setShowFab(true)
+    }
+    
+    lastScrollY.current = currentScrollY
+  }, [])
   
   const handleTocSelect = useCallback((id: string) => {
     setTocOpen(false)
@@ -327,43 +392,54 @@ export function AgentsMdPage() {
     }, 100)
   }, [])
   
+  // Reset scroll position and FAB when switching files
+  useEffect(() => {
+    setShowFab(true)
+    lastScrollY.current = 0
+  }, [fileMode])
+  
   return (
     <div className="flex flex-col h-full">
       {/* Header row */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border bg-card/50">
+      <div className="flex items-center justify-between px-3 py-0.5 border-b border-border bg-card/50">
         {/* File info - left side */}
-        <div className="flex flex-col min-w-0">
-          <span className="text-xs font-medium text-foreground truncate">AGENTS.md</span>
-          <span className="text-[10px] text-muted-foreground truncate">{AGENTS_MD_PATH}</span>
+        <div className="flex flex-col min-w-0 py-0.5">
+          <span className="text-xs font-medium text-foreground truncate">{currentFileName}</span>
+          <span className="text-[9px] text-muted-foreground truncate">{currentPath}</span>
         </div>
         
-        {/* Toggle + ToC - right side */}
-        <div className="flex items-center gap-2">
-          <ToggleGroup 
-            type="single" 
-            value={viewMode} 
-            onValueChange={(value) => value && setViewMode(value as ViewMode)}
-            size="sm"
-            variant="outline"
-            className="h-7"
-          >
-            <ToggleGroupItem value="preview" className="text-[10px] px-2 h-6">
-              Preview
-            </ToggleGroupItem>
-            <ToggleGroupItem value="markdown" className="text-[10px] px-2 h-6">
-              Markdown
-            </ToggleGroupItem>
-          </ToggleGroup>
+        {/* File toggle - center */}
+        <div className="flex-1 flex justify-center">
+          <PillToggle
+            value={fileMode}
+            onChange={setFileMode}
+            options={[
+              { value: "claude", label: "CLAUDE.md" },
+              { value: "agents", label: "AGENTS.md" },
+            ]}
+          />
+        </div>
+        
+        {/* View toggle - right side */}
+        <div className="flex items-center">
+          <PillToggle
+            value={viewMode}
+            onChange={setViewMode}
+            options={[
+              { value: "preview", label: "Preview" },
+              { value: "markdown", label: "Markdown" },
+            ]}
+          />
         </div>
       </div>
       
       {/* Content area */}
       <div className="flex-1 relative overflow-hidden">
-        <ScrollArea className="h-full">
-          <div ref={scrollRef} className="p-3">
+        <ScrollArea className="h-full" onScrollCapture={handleScroll}>
+          <div ref={scrollContainerRef} className="p-3">
             {viewMode === "preview" ? (
               // Preview mode with collapsible headers
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {sections.map((section, index) => (
                   <CollapsibleSection key={index} section={section} defaultOpen={true} />
                 ))}
@@ -387,19 +463,24 @@ export function AgentsMdPage() {
           </div>
         </ScrollArea>
         
-        {/* ToC FAB - only show in preview mode */}
+        {/* ToC FAB - only show in preview mode, hide on scroll down */}
         {viewMode === "preview" && (
           <Sheet open={tocOpen} onOpenChange={setTocOpen}>
             <SheetTrigger asChild>
-              <button className="absolute top-3 right-3 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors">
-                <VscListTree className="w-4 h-4" />
+              <button 
+                className={`absolute top-2 right-2 h-7 px-2.5 rounded-md bg-[#4a5568] text-white/90 flex items-center justify-center gap-1.5 shadow-md hover:bg-[#5a6578] transition-all duration-200 ${
+                  showFab ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+                }`}
+              >
+                <VscListTree className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-medium">ToC</span>
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] p-0">
-              <SheetHeader className="p-4 pb-2 border-b border-border">
+            <SheetContent side="right" className="w-[280px] p-0 max-h-full">
+              <SheetHeader className="p-3 pb-2 border-b border-border">
                 <SheetTitle className="text-sm">Table of Contents</SheetTitle>
               </SheetHeader>
-              <ScrollArea className="h-[calc(100%-60px)]">
+              <ScrollArea className="h-[calc(100%-48px)]">
                 <div className="p-3">
                   <TableOfContents headers={headers} onSelect={handleTocSelect} />
                 </div>

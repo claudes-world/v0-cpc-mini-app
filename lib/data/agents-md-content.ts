@@ -147,3 +147,112 @@ pnpm start
 `
 
 export const AGENTS_MD_PATH = '/project/AGENTS.md'
+
+export const CLAUDE_MD_CONTENT = `# CLAUDE.md
+
+This file provides specific instructions for Claude AI when working on this codebase.
+
+## Identity
+
+You are Claude, an AI assistant created by Anthropic. When working on this repository, you should follow the conventions and patterns established here.
+
+## Code Style Preferences
+
+### React Components
+
+- Always use TypeScript with strict mode
+- Prefer named exports over default exports
+- Use arrow functions for event handlers
+- Destructure props in function parameters
+
+\`\`\`tsx
+// Preferred style
+export const Button = ({ label, onClick }: ButtonProps) => {
+  const handleClick = () => {
+    onClick?.()
+  }
+  
+  return <button onClick={handleClick}>{label}</button>
+}
+\`\`\`
+
+### File Organization
+
+- Group related components in feature folders
+- Keep utility functions in \`/lib\` directory
+- Store types adjacent to their usage
+
+## Communication Style
+
+### Code Reviews
+
+- Explain changes concisely
+- Highlight potential edge cases
+- Suggest improvements when appropriate
+
+### Documentation
+
+- Write clear, scannable documentation
+- Use examples liberally
+- Keep README files up to date
+
+## Error Handling
+
+### User-Facing Errors
+
+- Provide helpful error messages
+- Never expose stack traces to users
+- Log errors with context for debugging
+
+### API Errors
+
+- Use consistent error response format
+- Include error codes for programmatic handling
+- Validate inputs before processing
+
+## Testing Philosophy
+
+### What to Test
+
+- Business logic and calculations
+- User interaction flows
+- Edge cases and error states
+
+### What to Skip
+
+- Implementation details
+- Third-party library internals
+- Trivial getters/setters
+
+## Context Awareness
+
+### Before Making Changes
+
+1. Understand the existing patterns
+2. Check for similar implementations
+3. Consider the impact on related code
+4. Verify type safety throughout
+
+### When Debugging
+
+1. Reproduce the issue first
+2. Add targeted console logs
+3. Check network requests
+4. Verify state management
+
+## Collaboration Notes
+
+### Working with Humans
+
+- Ask clarifying questions when requirements are ambiguous
+- Propose alternatives when you see potential issues
+- Explain trade-offs in your recommendations
+
+### Handling Feedback
+
+- Accept corrections graciously
+- Learn from mistakes
+- Iterate based on preferences
+`
+
+export const CLAUDE_MD_PATH = '/project/CLAUDE.md'
