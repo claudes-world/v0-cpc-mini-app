@@ -193,41 +193,38 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
 
   return (
     <SelectPrimitive.Root value={value} onValueChange={handleValueChange} open={selectOpen} onOpenChange={setSelectOpen}>
-      {/* Combined draggable select trigger */}
-      <div
-        className={`inline-flex items-stretch rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
-          }`}
-        style={{
-          backgroundColor: '#4c566a',
-          // Shadow only goes up and left, not down or right
-          boxShadow: isDragging
-            ? '-4px -4px 12px -2px rgba(0,0,0,0.6), inset 0 0 0 0 transparent'
-            : '-3px -3px 8px -2px rgba(0,0,0,0.4)',
-        }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-      >
-        {/* Drag handle grip */}
-        <div className="flex items-center px-1 border-r border-[#3b4252]">
-          <GripVertical className="w-3 h-3 text-[#d8dee9]" />
-        </div>
-
-        {/* Bot selector trigger - fixed width */}
-        <SelectPrimitive.Trigger
-          className="inline-flex items-center justify-between gap-1 px-1.5 py-1.5 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
-          style={{ width: SELECTOR_WIDTH }}
-          tabIndex={-1}
+      {/* Combined draggable select trigger - the Trigger wraps everything so portal positions correctly */}
+      <SelectPrimitive.Trigger asChild>
+        <div
+          className={`inline-flex items-stretch rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
+            }`}
+          style={{
+            backgroundColor: '#4c566a',
+            // Shadow only goes up and left, not down or right
+            boxShadow: isDragging
+              ? '-4px -4px 12px -2px rgba(0,0,0,0.6), inset 0 0 0 0 transparent'
+              : '-3px -3px 8px -2px rgba(0,0,0,0.4)',
+          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
         >
-          <SelectPrimitive.Value>
-            {selectedBot?.label}
-          </SelectPrimitive.Value>
-          <SelectPrimitive.Icon>
+          {/* Drag handle grip */}
+          <div className="flex items-center px-1 border-r border-[#3b4252]">
+            <GripVertical className="w-3 h-3 text-[#d8dee9]" />
+          </div>
+
+          {/* Bot selector display - fixed width */}
+          <div
+            className="inline-flex items-center justify-between gap-1 px-1.5 py-1.5 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors"
+            style={{ width: SELECTOR_WIDTH }}
+          >
+            <span>{selectedBot?.label}</span>
             <VscChevronDown className="w-2.5 h-2.5 shrink-0" />
-          </SelectPrimitive.Icon>
-        </SelectPrimitive.Trigger>
-      </div>
+          </div>
+        </div>
+      </SelectPrimitive.Trigger>
 
       <SelectPrimitive.Portal>
         <SelectPrimitive.Content
