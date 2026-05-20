@@ -200,10 +200,10 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
             }`}
           style={{
             backgroundColor: '#4c566a',
-            // Shadow only goes up and left, not down or right
+            // Inset shadow on top and left to match terminal panel's recessed look
             boxShadow: isDragging
-              ? '-4px -4px 12px -2px rgba(0,0,0,0.6), inset 0 0 0 0 transparent'
-              : '-3px -3px 8px -2px rgba(0,0,0,0.4)',
+              ? 'inset 0 4px 8px -2px rgba(0,0,0,0.5), inset 4px 0 8px -2px rgba(0,0,0,0.4)'
+              : 'inset 0 4px 8px -2px rgba(0,0,0,0.5), inset 4px 0 8px -2px rgba(0,0,0,0.4)',
           }}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
