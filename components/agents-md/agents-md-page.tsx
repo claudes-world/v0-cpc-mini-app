@@ -426,6 +426,7 @@ export function AgentsMdPage() {
   // Get current content based on file mode
   const currentContent = fileMode === "claude" ? CLAUDE_MD_CONTENT : AGENTS_MD_CONTENT
   const currentPath = fileMode === "claude" ? CLAUDE_MD_PATH : AGENTS_MD_PATH
+  const currentFileName = fileMode === "claude" ? "CLAUDE.md" : "AGENTS.md"
   
   const headers = useMemo(() => parseHeaders(currentContent), [currentContent])
   const sections = useMemo(() => parseMarkdownSections(currentContent), [currentContent])
@@ -465,9 +466,15 @@ export function AgentsMdPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Header row */}
-      <div className="flex items-center justify-between px-3 py-px border-b border-border bg-card/50">
-        {/* File toggle and path - left side */}
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between px-3 py-0.5 border-b border-border bg-card/50">
+        {/* File info - left side */}
+        <div className="flex flex-col min-w-0 py-0.5">
+          <span className="text-xs font-medium text-foreground truncate">{currentFileName}</span>
+          <span className="text-[9px] text-muted-foreground truncate">{currentPath}</span>
+        </div>
+        
+        {/* File toggle - center */}
+        <div className="flex-1 flex justify-center">
           <PillToggle
             value={fileMode}
             onChange={setFileMode}
@@ -476,18 +483,19 @@ export function AgentsMdPage() {
               { value: "agents", label: "AGENTS.md" },
             ]}
           />
-          <span className="text-[9px] text-muted-foreground truncate">{currentPath}</span>
         </div>
         
         {/* View toggle - right side */}
-        <PillToggle
-          value={viewMode}
-          onChange={setViewMode}
-          options={[
-            { value: "preview", label: "Preview" },
-            { value: "markdown", label: "Markdown" },
-          ]}
-        />
+        <div className="flex items-center">
+          <PillToggle
+            value={viewMode}
+            onChange={setViewMode}
+            options={[
+              { value: "preview", label: "Preview" },
+              { value: "markdown", label: "Markdown" },
+            ]}
+          />
+        </div>
       </div>
       
       {/* Content area - relative positioning for contained ToC */}
