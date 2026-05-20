@@ -73,7 +73,7 @@ export default function Home() {
 
       {/* Tabs section - middle area (fills remaining space minus action bar) */}
       <div 
-        className="flex-1 min-h-0 border-t border-border"
+        className="flex-1 min-h-0 border-t border-border relative z-40"
         style={{ 
           transition: isDragging ? 'none' : 'flex 0.2s ease-out'
         }}
