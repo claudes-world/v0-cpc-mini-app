@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened, VscBook } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened, VscBook, VscSymbolColor } from "react-icons/vsc"
 import { FileIcon } from "./file-icon"
 import { WebHaptics } from "web-haptics"
 import { ActivityPage } from "./activity/activity-page"
@@ -436,6 +436,78 @@ export function LinksTab() {
   )
 }
 
+export function ColorsTab() {
+  const colorGroups = [
+    {
+      name: "Polar Night",
+      colors: [
+        { name: "nord0", hex: "#2e3440", desc: "Origin" },
+        { name: "nord1", hex: "#3b4252", desc: "Prominent" },
+        { name: "nord2", hex: "#434c5e", desc: "Selection" },
+        { name: "nord3", hex: "#4c566a", desc: "Comments" },
+      ],
+    },
+    {
+      name: "Snow Storm",
+      colors: [
+        { name: "nord4", hex: "#d8dee9", desc: "Origin" },
+        { name: "nord5", hex: "#e5e9f0", desc: "Brighter" },
+        { name: "nord6", hex: "#eceff4", desc: "Brightest" },
+      ],
+    },
+    {
+      name: "Frost",
+      colors: [
+        { name: "nord7", hex: "#8fbcbb", desc: "Frozen" },
+        { name: "nord8", hex: "#88c0d0", desc: "Clear Ice" },
+        { name: "nord9", hex: "#81a1c1", desc: "Water" },
+        { name: "nord10", hex: "#5e81ac", desc: "Ocean" },
+      ],
+    },
+    {
+      name: "Aurora",
+      colors: [
+        { name: "nord11", hex: "#bf616a", desc: "Red" },
+        { name: "nord12", hex: "#d08770", desc: "Orange" },
+        { name: "nord13", hex: "#ebcb8b", desc: "Yellow" },
+        { name: "nord14", hex: "#a3be8c", desc: "Green" },
+        { name: "nord15", hex: "#b48ead", desc: "Purple" },
+      ],
+    },
+  ]
+
+  return (
+    <div className="p-2 space-y-3">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground px-1">
+        Nord Theme Colors
+      </div>
+      {colorGroups.map((group) => (
+        <div key={group.name}>
+          <div className="text-[10px] text-muted-foreground mb-1.5 px-1">
+            {group.name}
+          </div>
+          <div className="grid grid-cols-4 gap-1">
+            {group.colors.map((color) => (
+              <div
+                key={color.name}
+                className="flex flex-col items-center gap-1"
+              >
+                <div
+                  className="w-full aspect-square rounded border border-border"
+                  style={{ backgroundColor: color.hex }}
+                />
+                <div className="text-[9px] text-muted-foreground font-mono">
+                  {color.hex}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // Default tabs export
 export const defaultTabs: Tab[] = [
   {
@@ -455,6 +527,12 @@ export const defaultTabs: Tab[] = [
     label: "Links",
     icon: <VscLink />,
     content: <LinksTab />,
+  },
+  {
+    id: "colors",
+    label: "Colors",
+    icon: <VscSymbolColor />,
+    content: <ColorsTab />,
   },
   {
     id: "agents",
