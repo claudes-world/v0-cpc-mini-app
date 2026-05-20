@@ -55,6 +55,12 @@ export function TerminalCarousel({ children, currentIndex, onIndexChange }: Term
   }, [currentIndex, isSwiping])
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    // Check if the touch originated from an interactive element we should ignore
+    const target = e.target as HTMLElement
+    if (target.closest('[data-carousel-ignore]')) {
+      return
+    }
+    
     if (containerRef.current) {
       containerWidthRef.current = containerRef.current.offsetWidth
     }
@@ -106,6 +112,15 @@ export function TerminalCarousel({ children, currentIndex, onIndexChange }: Term
 
   // Mouse support for desktop
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    // Only handle left mouse button and ignore if target is inside a nested interactive element
+    if (e.button !== 0) return
+    
+    // Check if the click originated from an interactive element we should ignore
+    const target = e.target as HTMLElement
+    if (target.closest('[data-carousel-ignore]')) {
+      return
+    }
+    
     if (containerRef.current) {
       containerWidthRef.current = containerRef.current.offsetWidth
     }
