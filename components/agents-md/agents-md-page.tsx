@@ -377,10 +377,10 @@ function TocPanel({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       style={{ transform: `translateX(${translateX}px)` }}
-      className="absolute top-0 right-0 bottom-0 w-[220px] bg-card border-l border-border shadow-lg z-10 flex flex-col animate-in slide-in-from-right-2 duration-200 transition-transform"
+      className="absolute top-0 right-0 bottom-0 w-[220px] bg-card border-l border-border shadow-lg z-10 flex flex-col animate-in slide-in-from-right-2 duration-200 transition-transform overflow-hidden"
     >
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+      {/* Header - fixed height */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border shrink-0">
         <span className="text-xs font-semibold text-foreground">Table of Contents</span>
         <button 
           onClick={onClose}
@@ -389,26 +389,28 @@ function TocPanel({
           <VscClose className="w-3.5 h-3.5 text-muted-foreground" />
         </button>
       </div>
-      {/* Content */}
-      <ScrollArea className="flex-1">
-        <div className="p-2 space-y-0.5">
-          {headers.map((header, index) => (
-            <button
-              key={index}
-              onClick={() => onSelect(header.id)}
-              className={`block w-full text-left text-xs py-1 px-2 rounded hover:bg-accent transition-colors ${
-                header.level === 1 
-                  ? "font-semibold text-foreground" 
-                  : header.level === 2 
-                  ? "pl-4 text-foreground/90" 
-                  : "pl-6 text-muted-foreground"
-              }`}
-            >
-              {header.text}
-            </button>
-          ))}
-        </div>
-      </ScrollArea>
+      {/* Content - scrollable, takes remaining space */}
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <ScrollArea className="h-full">
+          <div className="p-2 space-y-0.5">
+            {headers.map((header, index) => (
+              <button
+                key={index}
+                onClick={() => onSelect(header.id)}
+                className={`block w-full text-left text-xs py-1 px-2 rounded hover:bg-accent transition-colors ${
+                  header.level === 1 
+                    ? "font-semibold text-foreground" 
+                    : header.level === 2 
+                    ? "pl-4 text-foreground/90" 
+                    : "pl-6 text-muted-foreground"
+                }`}
+              >
+                {header.text}
+              </button>
+            ))}
+          </div>
+        </ScrollArea>
+      </div>
     </div>
   )
 }
