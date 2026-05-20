@@ -204,8 +204,8 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
         onMouseDown={handleMouseDown}
       >
         {/* Drag handle grip */}
-        <div className="flex items-center px-0.5 py-1 border-r border-[#3b4252]">
-          <GripVertical className="w-3 h-3 text-[#d8dee9]" />
+        <div className="flex items-center px-0.5 border-r border-[#3b4252]">
+          <GripVertical className="w-2.5 h-2.5 text-[#d8dee9]" />
         </div>
         
         {/* Bot selector trigger - fixed width */}
