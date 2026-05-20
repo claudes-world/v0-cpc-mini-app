@@ -486,17 +486,17 @@ export function ColorsTab() {
           <div className="text-[10px] text-muted-foreground mb-1.5 px-1">
             {group.name}
           </div>
-          <div className="grid grid-cols-4 gap-1">
+          <div className="grid grid-cols-8 gap-1">
             {group.colors.map((color) => (
               <div
                 key={color.name}
-                className="flex flex-col items-center gap-1"
+                className="flex flex-col items-center gap-0.5"
               >
                 <div
-                  className="w-full aspect-square rounded border border-border"
+                  className="w-6 h-6 rounded-sm border border-border"
                   style={{ backgroundColor: color.hex }}
                 />
-                <div className="text-[9px] text-muted-foreground font-mono">
+                <div className="text-[7px] text-muted-foreground font-mono">
                   {color.hex}
                 </div>
               </div>
