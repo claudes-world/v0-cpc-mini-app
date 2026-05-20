@@ -169,6 +169,9 @@ export function TerminalCarousel({ children, currentIndex, onIndexChange }: Term
     window.addEventListener('mouseup', handleMouseUp)
   }, [currentIndex, children.length, onIndexChange])
 
+  // Calculate the slide width as percentage of the inner container
+  const slideWidthPercent = 100 / children.length
+  
   return (
     <div 
       ref={containerRef}
@@ -181,7 +184,7 @@ export function TerminalCarousel({ children, currentIndex, onIndexChange }: Term
       <div 
         className="flex h-full"
         style={{
-          transform: `translateX(calc(-${currentIndex * 100}% + ${offsetX}px))`,
+          transform: `translateX(calc(-${currentIndex * slideWidthPercent}% + ${offsetX}px))`,
           transition: isAnimating ? 'transform 0.3s ease-out' : 'none',
           width: `${children.length * 100}%`,
         }}
