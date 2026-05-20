@@ -133,18 +133,11 @@ export function TerminalControls() {
 
       {/* Slash commands */}
       <div className="flex-1 overflow-hidden relative">
-        {/* Top inset shadow overlay - positioned over the scroll area */}
+        {/* Inset shadow overlay - all four sides */}
         <div 
-          className="absolute inset-x-0 top-0 h-3 pointer-events-none z-10"
+          className="absolute inset-0 pointer-events-none z-10"
           style={{
-            boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.5)'
-          }}
-        />
-        {/* Bottom inset shadow overlay */}
-        <div 
-          className="absolute inset-x-0 bottom-0 h-3 pointer-events-none z-10"
-          style={{
-            boxShadow: 'inset 0 -4px 8px -2px rgba(0,0,0,0.5)'
+            boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.5), inset 0 -4px 8px -2px rgba(0,0,0,0.5), inset 4px 0 8px -2px rgba(0,0,0,0.4), inset -4px 0 8px -2px rgba(0,0,0,0.4)'
           }}
         />
         <div className="h-full overflow-auto scrollbar-hide">
