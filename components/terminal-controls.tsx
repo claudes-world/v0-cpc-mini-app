@@ -104,7 +104,14 @@ export function TerminalControls() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-secondary/20">
+    <div className="h-full flex flex-col bg-secondary/20 relative">
+      {/* Inset shadow overlay - creates recessed appearance */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-10"
+        style={{
+          boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.4), inset 4px 0 8px -4px rgba(0,0,0,0.3), inset -4px 0 8px -4px rgba(0,0,0,0.3), inset 0 -4px 8px -4px rgba(0,0,0,0.2)'
+        }}
+      />
       {/* Pill chips row */}
       <div className="flex items-center gap-1.5 p-1.5 border-b border-border/50">
         <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Alpha</span>
