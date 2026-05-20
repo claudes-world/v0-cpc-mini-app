@@ -466,17 +466,7 @@ export function AgentsMdPage() {
     <div className="flex flex-col h-full">
       {/* Header row */}
       <div className="flex items-center justify-between px-3 py-px border-b border-border bg-card/50">
-        {/* View toggle - left side */}
-        <PillToggle
-          value={viewMode}
-          onChange={setViewMode}
-          options={[
-            { value: "preview", label: "Preview" },
-            { value: "markdown", label: "Markdown" },
-          ]}
-        />
-        
-        {/* File toggle and path - right side */}
+        {/* File toggle and path - left side */}
         <div className="flex items-center gap-2">
           <PillToggle
             value={fileMode}
@@ -488,6 +478,16 @@ export function AgentsMdPage() {
           />
           <span className="text-[9px] text-muted-foreground truncate">{currentPath}</span>
         </div>
+        
+        {/* View toggle - right side */}
+        <PillToggle
+          value={viewMode}
+          onChange={setViewMode}
+          options={[
+            { value: "preview", label: "Preview" },
+            { value: "markdown", label: "Markdown" },
+          ]}
+        />
       </div>
       
       {/* Content area - relative positioning for contained ToC */}
