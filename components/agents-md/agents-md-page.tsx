@@ -426,7 +426,6 @@ export function AgentsMdPage() {
   // Get current content based on file mode
   const currentContent = fileMode === "claude" ? CLAUDE_MD_CONTENT : AGENTS_MD_CONTENT
   const currentPath = fileMode === "claude" ? CLAUDE_MD_PATH : AGENTS_MD_PATH
-  const currentFileName = fileMode === "claude" ? "CLAUDE.md" : "AGENTS.md"
   
   const headers = useMemo(() => parseHeaders(currentContent), [currentContent])
   const sections = useMemo(() => parseMarkdownSections(currentContent), [currentContent])
@@ -466,15 +465,12 @@ export function AgentsMdPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Header row */}
-      <div className="flex items-center justify-between px-3 py-0.5 border-b border-border bg-card/50">
-        {/* File info - left side */}
-        <div className="flex flex-col min-w-0 py-0.5">
-          <span className="text-xs font-medium text-foreground truncate">{currentFileName}</span>
-          <span className="text-[9px] text-muted-foreground truncate">{currentPath}</span>
-        </div>
+      <div className="flex items-center justify-between px-3 border-b border-border bg-card/50">
+        {/* Path - left side */}
+        <span className="text-[9px] text-muted-foreground truncate min-w-0">{currentPath}</span>
         
         {/* File toggle - center */}
-        <div className="flex-1 flex justify-center">
+        <div className="flex justify-center">
           <PillToggle
             value={fileMode}
             onChange={setFileMode}
@@ -486,16 +482,14 @@ export function AgentsMdPage() {
         </div>
         
         {/* View toggle - right side */}
-        <div className="flex items-center">
-          <PillToggle
-            value={viewMode}
-            onChange={setViewMode}
-            options={[
-              { value: "preview", label: "Preview" },
-              { value: "markdown", label: "Markdown" },
-            ]}
-          />
-        </div>
+        <PillToggle
+          value={viewMode}
+          onChange={setViewMode}
+          options={[
+            { value: "preview", label: "Preview" },
+            { value: "markdown", label: "Markdown" },
+          ]}
+        />
       </div>
       
       {/* Content area - relative positioning for contained ToC */}
