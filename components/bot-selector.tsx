@@ -1,7 +1,7 @@
 "use client"
 
 import * as SelectPrimitive from "@radix-ui/react-select"
-import { VscChevronDown, VscGripper } from "react-icons/vsc"
+import { VscChevronDown } from "react-icons/vsc"
 import { useState, useRef, useCallback, useEffect } from "react"
 import { WebHaptics } from "web-haptics"
 
@@ -120,13 +120,13 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange }: Draggab
     hasDraggedRef.current = false
   }, [onHeightChange, getClosestSnapPoint])
 
-  // Touch handlers on the grip area
-  const handleGripTouchStart = useCallback((e: React.TouchEvent) => {
+  // Touch handlers on the select trigger
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
     e.stopPropagation()
     handleStart(e.touches[0].clientY)
   }, [handleStart])
 
-  const handleGripTouchMove = useCallback((e: React.TouchEvent) => {
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
     e.stopPropagation()
     if (hasDraggedRef.current) {
       e.preventDefault()
@@ -134,13 +134,18 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange }: Draggab
     handleMove(e.touches[0].clientY)
   }, [handleMove])
 
-  const handleGripTouchEnd = useCallback((e: React.TouchEvent) => {
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     e.stopPropagation()
-    handleEnd()
+    // If we dragged, just end the drag. If we didn't drag, open the select.
+    if (hasDraggedRef.current) {
+      handleEnd()
+    } else {
+      setSelectOpen(true)
+    }
   }, [handleEnd])
 
-  // Mouse handlers for desktop on grip area
-  const handleGripMouseDown = useCallback((e: React.MouseEvent) => {
+  // Mouse handlers for desktop - track if we should open select on mouseup
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.stopPropagation()
     e.preventDefault()
     handleStart(e.clientY)
@@ -150,7 +155,12 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange }: Draggab
     }
 
     const handleMouseUp = () => {
-      handleEnd()
+      // If we dragged, just end the drag. If we didn't drag, open the select.
+      if (hasDraggedRef.current) {
+        handleEnd()
+      } else {
+        setSelectOpen(true)
+      }
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
     }
@@ -163,27 +173,25 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange }: Draggab
   const currentSnapIndex = SNAP_POINTS.indexOf(getClosestSnapPoint(terminalHeight))
 
   return (
-    <div
-      className={`inline-flex items-center rounded-tl border-t border-l border-border transition-all ${
-        isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
-      }`}
-      style={{
-        backgroundColor: '#4c566a',
-        boxShadow: isDragging 
-          ? '-6px -4px 16px -2px rgba(0,0,0,0.7), -2px 0 8px -1px rgba(0,0,0,0.4)'
-          : '-6px -4px 12px -2px rgba(0,0,0,0.5), -2px 0 6px -1px rgba(0,0,0,0.3)'
-      }}
-    >
-      {/* Drag handle area */}
+    <SelectPrimitive.Root value={value} onValueChange={setValue} open={selectOpen} onOpenChange={setSelectOpen}>
+      {/* Combined draggable select trigger */}
       <div
-        className="touch-none select-none cursor-ns-resize flex items-center gap-1 px-1.5 py-1 border-r border-[#3b4252]"
-        onTouchStart={handleGripTouchStart}
-        onTouchMove={handleGripTouchMove}
-        onTouchEnd={handleGripTouchEnd}
-        onMouseDown={handleGripMouseDown}
+        className={`inline-flex items-center rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${
+          isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
+        }`}
+        style={{
+          backgroundColor: '#4c566a',
+          boxShadow: isDragging 
+            ? '-6px -4px 16px -2px rgba(0,0,0,0.7), -2px 0 8px -1px rgba(0,0,0,0.4)'
+            : '-6px -4px 12px -2px rgba(0,0,0,0.5), -2px 0 6px -1px rgba(0,0,0,0.3)'
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
       >
         {/* Snap point indicators */}
-        <div className="flex gap-0.5">
+        <div className="flex gap-0.5 px-1.5 py-1 border-r border-[#3b4252]">
           {SNAP_POINTS.map((_, i) => (
             <div
               key={i}
@@ -194,15 +202,10 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange }: Draggab
           ))}
         </div>
         
-        {/* Grip icon */}
-        <VscGripper className="w-3 h-3 text-[#d8dee9]" />
-      </div>
-
-      {/* Bot selector */}
-      <SelectPrimitive.Root value={value} onValueChange={setValue} open={selectOpen} onOpenChange={setSelectOpen}>
+        {/* Bot selector trigger - visual only, interaction handled by parent */}
         <SelectPrimitive.Trigger
-          className="inline-flex items-center gap-1 px-1.5 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none"
-          disabled={isDragging}
+          className="inline-flex items-center gap-1 px-1.5 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
+          tabIndex={-1}
         >
           <SelectPrimitive.Value>
             {selectedBot?.label}
@@ -211,29 +214,29 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange }: Draggab
             <VscChevronDown className="w-2.5 h-2.5" />
           </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
+      </div>
 
-        <SelectPrimitive.Portal>
-          <SelectPrimitive.Content
-            position="popper"
-            side="top"
-            align="end"
-            sideOffset={0}
-            className="z-50 min-w-[120px] max-h-[140px] overflow-y-auto bg-popover border border-border rounded-tl shadow-lg"
-          >
-            <SelectPrimitive.Viewport className="p-0.5">
-              {bots.map((bot) => (
-                <SelectPrimitive.Item
-                  key={bot.id}
-                  value={bot.id}
-                  className="relative flex items-center px-2 py-1.5 text-[10px] font-mono text-foreground rounded-sm outline-none cursor-pointer select-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
-                >
-                  <SelectPrimitive.ItemText>{bot.label}</SelectPrimitive.ItemText>
-                </SelectPrimitive.Item>
-              ))}
-            </SelectPrimitive.Viewport>
-          </SelectPrimitive.Content>
-        </SelectPrimitive.Portal>
-      </SelectPrimitive.Root>
-    </div>
+      <SelectPrimitive.Portal>
+        <SelectPrimitive.Content
+          position="popper"
+          side="top"
+          align="end"
+          sideOffset={0}
+          className="z-50 min-w-[120px] max-h-[140px] overflow-y-auto bg-popover border border-border rounded-tl shadow-lg"
+        >
+          <SelectPrimitive.Viewport className="p-0.5">
+            {bots.map((bot) => (
+              <SelectPrimitive.Item
+                key={bot.id}
+                value={bot.id}
+                className="relative flex items-center px-2 py-1.5 text-[10px] font-mono text-foreground rounded-sm outline-none cursor-pointer select-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
+              >
+                <SelectPrimitive.ItemText>{bot.label}</SelectPrimitive.ItemText>
+              </SelectPrimitive.Item>
+            ))}
+          </SelectPrimitive.Viewport>
+        </SelectPrimitive.Content>
+      </SelectPrimitive.Portal>
+    </SelectPrimitive.Root>
   )
 }
