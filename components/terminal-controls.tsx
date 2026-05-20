@@ -140,6 +140,13 @@ export function TerminalControls() {
             boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.5)'
           }}
         />
+        {/* Bottom inset shadow overlay */}
+        <div 
+          className="absolute inset-x-0 bottom-0 h-3 pointer-events-none z-10"
+          style={{
+            boxShadow: 'inset 0 -4px 8px -2px rgba(0,0,0,0.5)'
+          }}
+        />
         <div className="h-full overflow-auto scrollbar-hide">
         <SlashCommand command="/new" alias="clear" onClick={() => setNewModalOpen(true)} />
         <SlashCommand command="/compact" onClick={() => setCompactModalOpen(true)} />
