@@ -3,9 +3,6 @@
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { VscChevronDown } from "react-icons/vsc"
 import { GripVertical } from "lucide-react"
-
-// Calculate the width needed for the widest bot label
-const WIDEST_LABEL = bots.reduce((max, bot) => bot.label.length > max.length ? bot.label : max, "")
 import { useState, useRef, useCallback, useEffect } from "react"
 import { WebHaptics } from "web-haptics"
 
@@ -29,6 +26,9 @@ export const bots = [
   { id: "elder-3", label: "elder-3" },
   { id: "elder-4", label: "elder-4" },
 ]
+
+// Calculate the width needed for the widest bot label (must be after bots definition)
+const WIDEST_LABEL = bots.reduce((max, bot) => bot.label.length > max.length ? bot.label : max, "")
 
 // Snap points as percentages of viewport height (excluding action bar)
 export const SNAP_POINTS = [33, 60, 85] // small, medium, large
