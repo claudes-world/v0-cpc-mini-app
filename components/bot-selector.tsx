@@ -27,8 +27,8 @@ export const bots = [
   { id: "elder-4", label: "elder-4" },
 ]
 
-// Calculate the width needed for the widest bot label (must be after bots definition)
-const WIDEST_LABEL = bots.reduce((max, bot) => bot.label.length > max.length ? bot.label : max, "")
+// Fixed width for the selector to prevent layout shifts (wide enough for longest label)
+const SELECTOR_WIDTH = 90 // pixels
 
 // Snap points as percentages of viewport height (excluding action bar)
 export const SNAP_POINTS = [33, 60, 85] // small, medium, large
@@ -208,10 +208,10 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
           <GripVertical className="w-3 h-3 text-[#d8dee9]" />
         </div>
         
-        {/* Bot selector trigger - fixed width based on widest label */}
+        {/* Bot selector trigger - fixed width */}
         <SelectPrimitive.Trigger
           className="inline-flex items-center justify-between gap-1 px-1.5 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
-          style={{ width: `${Math.min(WIDEST_LABEL.length * 0.55 + 1.5, 8)}em` }}
+          style={{ width: SELECTOR_WIDTH }}
           tabIndex={-1}
         >
           <SelectPrimitive.Value>

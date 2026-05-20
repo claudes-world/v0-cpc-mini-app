@@ -42,7 +42,7 @@ export default function Home() {
         }}
       >
         {/* Left: Terminal Carousel */}
-        <div className="w-3/5 border-r border-border relative">
+        <div className="w-3/5 border-r border-border relative overflow-hidden">
           <TerminalCarousel 
             currentIndex={selectedBotIndex} 
             onIndexChange={setSelectedBotIndex}
