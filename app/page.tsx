@@ -19,7 +19,7 @@ export default function Home() {
   useEffect(() => {
     const isSnapPoint = SNAP_POINTS.includes(terminalHeight)
     const heightChanged = terminalHeight !== lastHeightRef.current
-    
+
     if (isSnapPoint && heightChanged) {
       // Small delay to allow the snap animation to complete
       const timer = setTimeout(() => {
@@ -27,33 +27,33 @@ export default function Home() {
       }, 50)
       return () => clearTimeout(timer)
     }
-    
+
     lastHeightRef.current = terminalHeight
   }, [terminalHeight])
 
   return (
     <div className="h-full flex flex-col bg-background">
       {/* Terminal section - dynamic height, split into two columns */}
-      <div 
+      <div
         className="flex"
-        style={{ 
+        style={{
           height: `${terminalHeight}%`,
           transition: isDragging ? 'none' : 'height 0.2s ease-out'
         }}
       >
         {/* Left: Terminal Carousel */}
         <div className="w-3/5 border-r border-border relative">
-          <TerminalCarousel 
-            currentIndex={selectedBotIndex} 
+          <TerminalCarousel
+            currentIndex={selectedBotIndex}
             onIndexChange={setSelectedBotIndex}
           >
             {bots.map((bot) => (
               <TmuxPanel key={bot.id} botId={bot.id} />
             ))}
           </TerminalCarousel>
-          
+
           {/* Resize handle overlay - positioned over carousel */}
-          <div className="absolute bottom-0 right-0 z-30" data-carousel-ignore>
+          <div className="absolute right-0 z-30" style={{ bottom: '-2px' }} data-carousel-ignore>
             <DraggableBotSelector
               terminalHeight={terminalHeight}
               onHeightChange={(h) => {
@@ -72,9 +72,9 @@ export default function Home() {
       </div>
 
       {/* Tabs section - middle area (fills remaining space minus action bar) */}
-      <div 
-        className="flex-1 min-h-0 border-t border-border"
-        style={{ 
+      <div
+        className="flex-1 min-h-0 border-t border-border relative z-40"
+        style={{
           transition: isDragging ? 'none' : 'flex 0.2s ease-out'
         }}
       >

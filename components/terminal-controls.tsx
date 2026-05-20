@@ -132,7 +132,15 @@ export function TerminalControls() {
       </div>
 
       {/* Slash commands */}
-      <div className="flex-1 overflow-auto scrollbar-hide">
+      <div className="flex-1 overflow-hidden relative">
+        {/* Inset shadow overlay - all four sides */}
+        <div 
+          className="absolute inset-0 pointer-events-none z-10"
+          style={{
+            boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.5), inset 0 -4px 8px -2px rgba(0,0,0,0.5), inset 4px 0 8px -2px rgba(0,0,0,0.4), inset -4px 0 8px -2px rgba(0,0,0,0.4)'
+          }}
+        />
+        <div className="h-full overflow-auto scrollbar-hide">
         <SlashCommand command="/new" alias="clear" onClick={() => setNewModalOpen(true)} />
         <SlashCommand command="/compact" onClick={() => setCompactModalOpen(true)} />
         <SlashCommand command="/branch" alias="fork" onClick={() => setBranchModalOpen(true)} />
@@ -170,6 +178,7 @@ export function TerminalControls() {
               ))}
             </div>
           </div>
+        </div>
         </div>
       </div>
 

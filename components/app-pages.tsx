@@ -1,18 +1,24 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened, VscBook } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened, VscBook, VscSymbolColor } from "react-icons/vsc"
 import { FileIcon } from "./file-icon"
 import { WebHaptics } from "web-haptics"
 import { ActivityPage } from "./activity/activity-page"
 import { AgentsMdPage } from "./agents-md/agents-md-page"
 
-// Safe haptics wrapper - vibrate might not be available in all environments
-const vibrate = (options: { duration: number; intensity: number }) => {
+// Create haptics instance
+let haptics: WebHaptics | null = null
+try {
+  haptics = new WebHaptics()
+} catch {
+  // Haptics not available
+}
+
+// Safe haptics wrapper using trigger with presets
+const triggerHaptic = (preset: "success" | "warning" | "error" | "light" | "medium" | "heavy" | "selection" | "impact") => {
   try {
-    if (typeof WebHaptics?.vibrate === 'function') {
-      WebHaptics.vibrate(options)
-    }
+    haptics?.trigger(preset)
   } catch {
     // Haptics not available
   }
@@ -86,7 +92,7 @@ export function AppPages({ tabs }: AppPagesProps) {
       if (Math.abs(rawDiff) > deadZonePixels && canSwipe && !deadZonePassedRef.current) {
         deadZonePassedRef.current = true
         setIsActivelyDragging(true)
-        vibrate({ duration: 10, intensity: 0.5 })
+        triggerHaptic("light")
       }
       
       // Calculate effective diff (subtracting dead zone)
@@ -110,12 +116,12 @@ export function AppPages({ tabs }: AppPagesProps) {
         // Just passed commit threshold - trigger haptic
         thresholdPassedRef.current = true
         setHasPassedThreshold(true)
-        vibrate({ duration: 15, intensity: 0.8 })
+        triggerHaptic("medium")
       } else if (!isOverCommitThreshold && thresholdPassedRef.current) {
         // Went back below commit threshold - trigger softer haptic
         thresholdPassedRef.current = false
         setHasPassedThreshold(false)
-        vibrate({ duration: 10, intensity: 0.4 })
+        triggerHaptic("light")
       }
 
       // Calculate visual translation
@@ -430,6 +436,78 @@ export function LinksTab() {
   )
 }
 
+export function ColorsTab() {
+  const colorGroups = [
+    {
+      name: "Polar Night",
+      colors: [
+        { name: "nord0", hex: "#2e3440", desc: "Origin" },
+        { name: "nord1", hex: "#3b4252", desc: "Prominent" },
+        { name: "nord2", hex: "#434c5e", desc: "Selection" },
+        { name: "nord3", hex: "#4c566a", desc: "Comments" },
+      ],
+    },
+    {
+      name: "Snow Storm",
+      colors: [
+        { name: "nord4", hex: "#d8dee9", desc: "Origin" },
+        { name: "nord5", hex: "#e5e9f0", desc: "Brighter" },
+        { name: "nord6", hex: "#eceff4", desc: "Brightest" },
+      ],
+    },
+    {
+      name: "Frost",
+      colors: [
+        { name: "nord7", hex: "#8fbcbb", desc: "Frozen" },
+        { name: "nord8", hex: "#88c0d0", desc: "Clear Ice" },
+        { name: "nord9", hex: "#81a1c1", desc: "Water" },
+        { name: "nord10", hex: "#5e81ac", desc: "Ocean" },
+      ],
+    },
+    {
+      name: "Aurora",
+      colors: [
+        { name: "nord11", hex: "#bf616a", desc: "Red" },
+        { name: "nord12", hex: "#d08770", desc: "Orange" },
+        { name: "nord13", hex: "#ebcb8b", desc: "Yellow" },
+        { name: "nord14", hex: "#a3be8c", desc: "Green" },
+        { name: "nord15", hex: "#b48ead", desc: "Purple" },
+      ],
+    },
+  ]
+
+  return (
+    <div className="p-2 space-y-3">
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground px-1">
+        Nord Theme Colors
+      </div>
+      {colorGroups.map((group) => (
+        <div key={group.name}>
+          <div className="text-[10px] text-muted-foreground mb-1.5 px-1">
+            {group.name}
+          </div>
+          <div className="grid grid-cols-8 gap-1">
+            {group.colors.map((color) => (
+              <div
+                key={color.name}
+                className="flex flex-col items-center gap-0.5"
+              >
+                <div
+                  className="w-6 h-6 rounded-sm border border-border"
+                  style={{ backgroundColor: color.hex }}
+                />
+                <div className="text-[7px] text-muted-foreground font-mono">
+                  {color.hex}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // Default tabs export
 export const defaultTabs: Tab[] = [
   {
@@ -449,6 +527,12 @@ export const defaultTabs: Tab[] = [
     label: "Links",
     icon: <VscLink />,
     content: <LinksTab />,
+  },
+  {
+    id: "colors",
+    label: "Colors",
+    icon: <VscSymbolColor />,
+    content: <ColorsTab />,
   },
   {
     id: "agents",

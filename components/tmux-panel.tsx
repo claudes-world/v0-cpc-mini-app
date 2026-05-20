@@ -96,7 +96,7 @@ export function TmuxPanel({ botId = "claude_do_bot" }: TmuxPanelProps) {
       <div 
         className="absolute inset-0 pointer-events-none z-10"
         style={{
-          boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.4), inset 4px 0 8px -4px rgba(0,0,0,0.3), inset -4px 0 8px -4px rgba(0,0,0,0.3), inset 0 -4px 8px -4px rgba(0,0,0,0.2)'
+          boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.5), inset 0 -4px 8px -2px rgba(0,0,0,0.5), inset 4px 0 8px -2px rgba(0,0,0,0.4), inset -4px 0 8px -2px rgba(0,0,0,0.4)'
         }}
       />
 
