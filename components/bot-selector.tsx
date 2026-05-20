@@ -215,7 +215,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
 
           {/* Bot selector display - fixed width */}
           <div
-            className="inline-flex items-center justify-between gap-1 px-1.5 py-1.5 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors"
+            className="inline-flex items-center justify-between gap-1 px-1.5 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors"
             style={{ width: SELECTOR_WIDTH }}
           >
             <span>{selectedBot?.label}</span>
