@@ -217,7 +217,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
         
         {/* Bot selector trigger - fixed width */}
         <SelectPrimitive.Trigger
-          className="inline-flex items-center justify-between gap-1 px-1.5 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
+          className="inline-flex items-center justify-between gap-1 px-1.5 py-0 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
           style={{ width: SELECTOR_WIDTH }}
           tabIndex={-1}
         >
