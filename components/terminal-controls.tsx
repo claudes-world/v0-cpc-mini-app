@@ -104,14 +104,7 @@ export function TerminalControls() {
   }
 
   return (
-    <div className="h-full flex flex-col bg-secondary/20 relative">
-      {/* Inset shadow overlay - creates recessed appearance */}
-      <div 
-        className="absolute inset-0 pointer-events-none z-10"
-        style={{
-          boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.4), inset 4px 0 8px -4px rgba(0,0,0,0.3), inset -4px 0 8px -4px rgba(0,0,0,0.3), inset 0 -4px 8px -4px rgba(0,0,0,0.2)'
-        }}
-      />
+    <div className="h-full flex flex-col bg-secondary/20">
       {/* Pill chips row */}
       <div className="flex items-center gap-1.5 p-1.5 border-b border-border/50">
         <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Alpha</span>
@@ -139,7 +132,14 @@ export function TerminalControls() {
       </div>
 
       {/* Slash commands */}
-      <div className="flex-1 overflow-auto scrollbar-hide">
+      <div className="flex-1 overflow-auto scrollbar-hide relative">
+        {/* Top inset shadow overlay */}
+        <div 
+          className="absolute inset-x-0 top-0 h-4 pointer-events-none z-10"
+          style={{
+            boxShadow: 'inset 0 4px 8px -2px rgba(0,0,0,0.4), inset 4px 0 8px -4px rgba(0,0,0,0.3), inset -4px 0 8px -4px rgba(0,0,0,0.3)'
+          }}
+        />
         <SlashCommand command="/new" alias="clear" onClick={() => setNewModalOpen(true)} />
         <SlashCommand command="/compact" onClick={() => setCompactModalOpen(true)} />
         <SlashCommand command="/branch" alias="fork" onClick={() => setBranchModalOpen(true)} />
