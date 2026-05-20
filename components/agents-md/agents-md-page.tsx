@@ -319,7 +319,7 @@ function CollapsibleSection({ section, defaultOpen = true }: { section: Section;
   )
 }
 
-// Inline ToC Panel component (contained within tab)
+// Inline ToC Panel component (contained within tab) with swipe to close
 function TocPanel({ 
   headers, 
   onSelect,
@@ -329,8 +329,56 @@ function TocPanel({
   onSelect: (id: string) => void
   onClose: () => void
 }) {
+  const panelRef = useRef<HTMLDivElement>(null)
+  const touchStartX = useRef(0)
+  const touchStartY = useRef(0)
+  const isDragging = useRef(false)
+  const [translateX, setTranslateX] = useState(0)
+  
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+    isDragging.current = false
+  }, [])
+  
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const deltaX = e.touches[0].clientX - touchStartX.current
+    const deltaY = e.touches[0].clientY - touchStartY.current
+    
+    // Only start horizontal drag if horizontal movement is significantly more than vertical
+    // This prevents accidental closes when scrolling
+    if (!isDragging.current) {
+      if (Math.abs(deltaX) > 15 && Math.abs(deltaX) > Math.abs(deltaY) * 2) {
+        isDragging.current = true
+      } else {
+        return
+      }
+    }
+    
+    // Only allow dragging to the right (positive deltaX) to close
+    if (deltaX > 0) {
+      setTranslateX(deltaX)
+    }
+  }, [])
+  
+  const handleTouchEnd = useCallback(() => {
+    // Close if swiped more than 80px to the right (good threshold to prevent accidental closes)
+    if (translateX > 80) {
+      onClose()
+    }
+    setTranslateX(0)
+    isDragging.current = false
+  }, [translateX, onClose])
+  
   return (
-    <div className="absolute top-0 right-0 bottom-0 w-[220px] bg-card border-l border-border shadow-lg z-10 flex flex-col animate-in slide-in-from-right-2 duration-200">
+    <div 
+      ref={panelRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={{ transform: `translateX(${translateX}px)` }}
+      className="absolute top-0 right-0 bottom-0 w-[220px] bg-card border-l border-border shadow-lg z-10 flex flex-col animate-in slide-in-from-right-2 duration-200 transition-transform"
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2 border-b border-border">
         <span className="text-xs font-semibold text-foreground">Table of Contents</span>
