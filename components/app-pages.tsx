@@ -1,10 +1,22 @@
 "use client"
 
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
-import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened } from "react-icons/vsc"
+import { VscFiles, VscIssues, VscGitPullRequest, VscPulse, VscLink, VscFolder, VscFolderOpened, VscBook } from "react-icons/vsc"
 import { FileIcon } from "./file-icon"
 import { WebHaptics } from "web-haptics"
 import { ActivityPage } from "./activity/activity-page"
+import { AgentsMdPage } from "./agents-md/agents-md-page"
+
+// Safe haptics wrapper - vibrate might not be available in all environments
+const vibrate = (options: { duration: number; intensity: number }) => {
+  try {
+    if (typeof WebHaptics?.vibrate === 'function') {
+      WebHaptics.vibrate(options)
+    }
+  } catch {
+    // Haptics not available
+  }
+}
 
 interface Tab {
   id: string
@@ -74,7 +86,7 @@ export function AppPages({ tabs }: AppPagesProps) {
       if (Math.abs(rawDiff) > deadZonePixels && canSwipe && !deadZonePassedRef.current) {
         deadZonePassedRef.current = true
         setIsActivelyDragging(true)
-        WebHaptics.vibrate({ duration: 10, intensity: 0.5 })
+        vibrate({ duration: 10, intensity: 0.5 })
       }
       
       // Calculate effective diff (subtracting dead zone)
@@ -98,12 +110,12 @@ export function AppPages({ tabs }: AppPagesProps) {
         // Just passed commit threshold - trigger haptic
         thresholdPassedRef.current = true
         setHasPassedThreshold(true)
-        WebHaptics.vibrate({ duration: 15, intensity: 0.8 })
+        vibrate({ duration: 15, intensity: 0.8 })
       } else if (!isOverCommitThreshold && thresholdPassedRef.current) {
         // Went back below commit threshold - trigger softer haptic
         thresholdPassedRef.current = false
         setHasPassedThreshold(false)
-        WebHaptics.vibrate({ duration: 10, intensity: 0.4 })
+        vibrate({ duration: 10, intensity: 0.4 })
       }
 
       // Calculate visual translation
@@ -437,5 +449,11 @@ export const defaultTabs: Tab[] = [
     label: "Links",
     icon: <VscLink />,
     content: <LinksTab />,
+  },
+  {
+    id: "agents",
+    label: "AGENTS.md",
+    icon: <VscBook />,
+    content: <AgentsMdPage />,
   },
 ]
