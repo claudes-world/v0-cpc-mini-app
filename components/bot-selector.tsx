@@ -52,11 +52,11 @@ interface DraggableBotSelectorProps {
 export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedBotIndex, onBotIndexChange }: DraggableBotSelectorProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [selectOpen, setSelectOpen] = useState(false)
-  
+
   // Derive value from index
   const value = bots[selectedBotIndex]?.id ?? bots[0].id
   const selectedBot = bots[selectedBotIndex] ?? bots[0]
-  
+
   // Handle value change from select
   const handleValueChange = useCallback((newValue: string) => {
     const newIndex = bots.findIndex(b => b.id === newValue)
@@ -64,7 +64,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
       onBotIndexChange(newIndex)
     }
   }, [onBotIndexChange])
-  
+
   const startYRef = useRef(0)
   const startHeightRef = useRef(0)
   const containerHeightRef = useRef(0)
@@ -81,7 +81,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
   const getClosestSnapPoint = useCallback((height: number) => {
     let closest = SNAP_POINTS[0]
     let minDistance = Math.abs(height - SNAP_POINTS[0])
-    
+
     for (const snap of SNAP_POINTS) {
       const distance = Math.abs(height - snap)
       if (distance < minDistance) {
@@ -98,7 +98,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     startHeightRef.current = currentHeightRef.current
     lastSnapRef.current = null
     hasDraggedRef.current = false
-    
+
     // Get container height (viewport minus action bar ~56px and notification line ~24px)
     containerHeightRef.current = window.innerHeight - 80
   }, [])
@@ -106,20 +106,20 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
   // Handle touch/mouse move
   const handleMove = useCallback((clientY: number) => {
     const totalDelta = Math.abs(clientY - startYRef.current)
-    
+
     // Check if we've passed the drag threshold
     if (!hasDraggedRef.current && totalDelta > DRAG_THRESHOLD) {
       hasDraggedRef.current = true
       setIsDragging(true)
       triggerHaptic("light")
     }
-    
+
     if (!hasDraggedRef.current) return
 
     const deltaY = clientY - startYRef.current
     const deltaPercent = (deltaY / containerHeightRef.current) * 100
     const newHeight = Math.max(20, Math.min(90, startHeightRef.current + deltaPercent))
-    
+
     // Check if we've crossed a snap point for haptic feedback
     const currentSnap = getClosestSnapPoint(newHeight)
     if (lastSnapRef.current !== null && currentSnap !== lastSnapRef.current) {
@@ -127,7 +127,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     }
     lastSnapRef.current = currentSnap
     currentHeightRef.current = newHeight
-    
+
     onHeightChange(newHeight)
   }, [onHeightChange, getClosestSnapPoint])
 
@@ -171,7 +171,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     e.stopPropagation()
     e.preventDefault()
     handleStart(e.clientY)
-    
+
     const handleMouseMove = (e: MouseEvent) => {
       handleMove(e.clientY)
     }
@@ -195,13 +195,12 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     <SelectPrimitive.Root value={value} onValueChange={handleValueChange} open={selectOpen} onOpenChange={setSelectOpen}>
       {/* Combined draggable select trigger */}
       <div
-        className={`inline-flex items-stretch rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${
-          isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
-        }`}
+        className={`inline-flex items-stretch rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
+          }`}
         style={{
           backgroundColor: '#4c566a',
           // Shadow only goes up and left, not down or right
-          boxShadow: isDragging 
+          boxShadow: isDragging
             ? '-4px -4px 12px -2px rgba(0,0,0,0.6), inset 0 0 0 0 transparent'
             : '-3px -3px 8px -2px rgba(0,0,0,0.4)',
         }}
@@ -214,10 +213,10 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
         <div className="flex items-center px-1 border-r border-[#3b4252]">
           <GripVertical className="w-3 h-3 text-[#d8dee9]" />
         </div>
-        
+
         {/* Bot selector trigger - fixed width */}
         <SelectPrimitive.Trigger
-          className="inline-flex items-center justify-between gap-1 px-1.5 py-0 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
+          className="inline-flex items-center justify-between gap-1 px-1.5 py-1.5 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
           style={{ width: SELECTOR_WIDTH }}
           tabIndex={-1}
         >
