@@ -189,14 +189,15 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     <SelectPrimitive.Root value={value} onValueChange={handleValueChange} open={selectOpen} onOpenChange={setSelectOpen}>
       {/* Combined draggable select trigger */}
       <div
-        className={`inline-flex items-center rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${
+        className={`inline-flex items-stretch rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${
           isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
         }`}
         style={{
           backgroundColor: '#4c566a',
+          // Shadow only goes up and left, not down or right
           boxShadow: isDragging 
-            ? '-6px -4px 16px -2px rgba(0,0,0,0.7), -2px 0 8px -1px rgba(0,0,0,0.4)'
-            : '-6px -4px 12px -2px rgba(0,0,0,0.5), -2px 0 6px -1px rgba(0,0,0,0.3)',
+            ? '-4px -4px 12px -2px rgba(0,0,0,0.6), inset 0 0 0 0 transparent'
+            : '-3px -3px 8px -2px rgba(0,0,0,0.4)',
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -204,8 +205,8 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
         onMouseDown={handleMouseDown}
       >
         {/* Drag handle grip */}
-        <div className="flex items-center px-0.5 border-r border-[#3b4252]">
-          <GripVertical className="w-2.5 h-2.5 text-[#d8dee9]" />
+        <div className="flex items-center px-1 border-r border-[#3b4252]">
+          <GripVertical className="w-3 h-3 text-[#d8dee9]" />
         </div>
         
         {/* Bot selector trigger - fixed width */}
