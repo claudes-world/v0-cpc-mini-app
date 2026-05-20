@@ -6,12 +6,18 @@ import { GripVertical } from "lucide-react"
 import { useState, useRef, useCallback, useEffect } from "react"
 import { WebHaptics } from "web-haptics"
 
-// Safe haptics wrapper - vibrate might not be available in all environments
-const vibrate = (options: { duration: number; intensity: number }) => {
+// Create haptics instance
+let haptics: WebHaptics | null = null
+try {
+  haptics = new WebHaptics()
+} catch {
+  // Haptics not available
+}
+
+// Safe haptics wrapper using trigger with presets
+const triggerHaptic = (preset: "success" | "warning" | "error" | "light" | "medium" | "heavy" | "selection" | "impact") => {
   try {
-    if (typeof WebHaptics?.vibrate === 'function') {
-      WebHaptics.vibrate(options)
-    }
+    haptics?.trigger(preset)
   } catch {
     // Haptics not available
   }
@@ -105,7 +111,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     if (!hasDraggedRef.current && totalDelta > DRAG_THRESHOLD) {
       hasDraggedRef.current = true
       setIsDragging(true)
-      vibrate({ duration: 10, intensity: 0.5 })
+      triggerHaptic("light")
     }
     
     if (!hasDraggedRef.current) return
@@ -117,7 +123,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     // Check if we've crossed a snap point for haptic feedback
     const currentSnap = getClosestSnapPoint(newHeight)
     if (lastSnapRef.current !== null && currentSnap !== lastSnapRef.current) {
-      vibrate({ duration: 15, intensity: 0.6 })
+      triggerHaptic("selection")
     }
     lastSnapRef.current = currentSnap
     currentHeightRef.current = newHeight
@@ -131,7 +137,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
       const snapTo = getClosestSnapPoint(currentHeightRef.current)
       onHeightChange(snapTo)
       setIsDragging(false)
-      vibrate({ duration: 20, intensity: 0.8 })
+      triggerHaptic("medium")
     }
     hasDraggedRef.current = false
   }, [onHeightChange, getClosestSnapPoint])

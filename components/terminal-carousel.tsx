@@ -3,12 +3,18 @@
 import { useState, useRef, useCallback, useEffect, type ReactNode } from "react"
 import { WebHaptics } from "web-haptics"
 
-// Safe haptics wrapper
-const vibrate = (options: { duration: number; intensity: number }) => {
+// Create haptics instance
+let haptics: WebHaptics | null = null
+try {
+  haptics = new WebHaptics()
+} catch {
+  // Haptics not available
+}
+
+// Safe haptics wrapper using trigger with presets
+const triggerHaptic = (preset: "success" | "warning" | "error" | "light" | "medium" | "heavy" | "selection" | "impact") => {
   try {
-    if (typeof WebHaptics?.vibrate === 'function') {
-      WebHaptics.vibrate(options)
-    }
+    haptics?.trigger(preset)
   } catch {
     // Haptics not available
   }
@@ -93,11 +99,11 @@ export function TerminalCarousel({ children, currentIndex, onIndexChange }: Term
     if (Math.abs(offsetX) > SWIPE_THRESHOLD) {
       if (offsetX > 0 && currentIndex > 0) {
         // Swipe right - go to previous
-        vibrate({ duration: 15, intensity: 0.6 })
+        triggerHaptic("selection")
         onIndexChange(currentIndex - 1)
       } else if (offsetX < 0 && currentIndex < children.length - 1) {
         // Swipe left - go to next
-        vibrate({ duration: 15, intensity: 0.6 })
+        triggerHaptic("selection")
         onIndexChange(currentIndex + 1)
       }
     }
@@ -146,10 +152,10 @@ export function TerminalCarousel({ children, currentIndex, onIndexChange }: Term
       const currentOffset = offsetXRef.current
       if (Math.abs(currentOffset) > SWIPE_THRESHOLD) {
         if (currentOffset > 0 && currentIndex > 0) {
-          vibrate({ duration: 15, intensity: 0.6 })
+          triggerHaptic("selection")
           onIndexChange(currentIndex - 1)
         } else if (currentOffset < 0 && currentIndex < children.length - 1) {
-          vibrate({ duration: 15, intensity: 0.6 })
+          triggerHaptic("selection")
           onIndexChange(currentIndex + 1)
         }
       }
