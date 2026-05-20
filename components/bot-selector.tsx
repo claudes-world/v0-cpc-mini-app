@@ -16,7 +16,7 @@ const vibrate = (options: { duration: number; intensity: number }) => {
   }
 }
 
-const bots = [
+export const bots = [
   { id: "claude_do_bot", label: "claude_do_bot" },
   { id: "pm_dobot", label: "pm_dobot" },
   { id: "gstack_dobot", label: "gstack_dobot" },
@@ -35,13 +35,25 @@ const DRAG_THRESHOLD = 8
 interface DraggableBotSelectorProps {
   terminalHeight: number
   onHeightChange: (height: number) => void
+  selectedBotIndex: number
+  onBotIndexChange: (index: number) => void
 }
 
-export function DraggableBotSelector({ terminalHeight, onHeightChange }: DraggableBotSelectorProps) {
-  const [value, setValue] = useState("claude_do_bot")
+export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedBotIndex, onBotIndexChange }: DraggableBotSelectorProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [selectOpen, setSelectOpen] = useState(false)
-  const selectedBot = bots.find(b => b.id === value)
+  
+  // Derive value from index
+  const value = bots[selectedBotIndex]?.id ?? bots[0].id
+  const selectedBot = bots[selectedBotIndex] ?? bots[0]
+  
+  // Handle value change from select
+  const handleValueChange = useCallback((newValue: string) => {
+    const newIndex = bots.findIndex(b => b.id === newValue)
+    if (newIndex !== -1) {
+      onBotIndexChange(newIndex)
+    }
+  }, [onBotIndexChange])
   
   const startYRef = useRef(0)
   const startHeightRef = useRef(0)
@@ -173,7 +185,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange }: Draggab
   const currentSnapIndex = SNAP_POINTS.indexOf(getClosestSnapPoint(terminalHeight))
 
   return (
-    <SelectPrimitive.Root value={value} onValueChange={setValue} open={selectOpen} onOpenChange={setSelectOpen}>
+    <SelectPrimitive.Root value={value} onValueChange={handleValueChange} open={selectOpen} onOpenChange={setSelectOpen}>
       {/* Combined draggable select trigger */}
       <div
         className={`inline-flex items-center rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${
