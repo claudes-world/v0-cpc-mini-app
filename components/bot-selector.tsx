@@ -209,13 +209,13 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
           onMouseDown={handleMouseDown}
         >
           {/* Drag handle grip */}
-          <div className="flex items-center px-1 border-r border-[#3b4252]">
+          <div className="flex items-center px-1 py-0 border-r border-[#3b4252]">
             <GripVertical className="w-3 h-3 text-[#d8dee9]" />
           </div>
 
           {/* Bot selector display - fixed width */}
           <div
-            className="inline-flex items-center justify-between gap-1 pl-1 pr-3 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors"
+            className="inline-flex items-center justify-between gap-0 pl-1 pr-3 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors"
             style={{ width: SELECTOR_WIDTH }}
           >
             <span>{selectedBot?.label}</span>
