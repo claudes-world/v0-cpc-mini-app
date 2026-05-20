@@ -1,9 +1,8 @@
 "use client"
 
 import { useState, useMemo, useRef, useCallback, useEffect } from "react"
-import { VscListTree, VscChevronDown, VscChevronRight } from "react-icons/vsc"
+import { VscListTree, VscChevronDown, VscChevronRight, VscClose } from "react-icons/vsc"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { 
   AGENTS_MD_CONTENT, 
@@ -320,31 +319,48 @@ function CollapsibleSection({ section, defaultOpen = true }: { section: Section;
   )
 }
 
-// Table of Contents component
-function TableOfContents({ 
+// Inline ToC Panel component (contained within tab)
+function TocPanel({ 
   headers, 
-  onSelect 
+  onSelect,
+  onClose
 }: { 
   headers: TocItem[]
-  onSelect: (id: string) => void 
+  onSelect: (id: string) => void
+  onClose: () => void
 }) {
   return (
-    <div className="space-y-0.5">
-      {headers.map((header, index) => (
-        <button
-          key={index}
-          onClick={() => onSelect(header.id)}
-          className={`block w-full text-left text-xs py-1 px-2 rounded hover:bg-accent transition-colors ${
-            header.level === 1 
-              ? "font-semibold text-foreground" 
-              : header.level === 2 
-              ? "pl-4 text-foreground/90" 
-              : "pl-6 text-muted-foreground"
-          }`}
+    <div className="absolute top-0 right-0 bottom-0 w-[220px] bg-card border-l border-border shadow-lg z-10 flex flex-col animate-in slide-in-from-right-2 duration-200">
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-border">
+        <span className="text-xs font-semibold text-foreground">Table of Contents</span>
+        <button 
+          onClick={onClose}
+          className="p-1 rounded hover:bg-accent transition-colors"
         >
-          {header.text}
+          <VscClose className="w-3.5 h-3.5 text-muted-foreground" />
         </button>
-      ))}
+      </div>
+      {/* Content */}
+      <ScrollArea className="flex-1">
+        <div className="p-2 space-y-0.5">
+          {headers.map((header, index) => (
+            <button
+              key={index}
+              onClick={() => onSelect(header.id)}
+              className={`block w-full text-left text-xs py-1 px-2 rounded hover:bg-accent transition-colors ${
+                header.level === 1 
+                  ? "font-semibold text-foreground" 
+                  : header.level === 2 
+                  ? "pl-4 text-foreground/90" 
+                  : "pl-6 text-muted-foreground"
+              }`}
+            >
+              {header.text}
+            </button>
+          ))}
+        </div>
+      </ScrollArea>
     </div>
   )
 }
@@ -355,7 +371,7 @@ export function AgentsMdPage() {
   const [tocOpen, setTocOpen] = useState(false)
   const [showFab, setShowFab] = useState(true)
   const lastScrollY = useRef(0)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const contentScrollRef = useRef<HTMLDivElement>(null)
   
   // Get current content based on file mode
   const currentContent = fileMode === "claude" ? CLAUDE_MD_CONTENT : AGENTS_MD_CONTENT
@@ -382,14 +398,13 @@ export function AgentsMdPage() {
   }, [])
   
   const handleTocSelect = useCallback((id: string) => {
-    setTocOpen(false)
-    // Scroll to element
+    // Don't close ToC - just scroll to element
     setTimeout(() => {
       const element = document.getElementById(id)
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
-    }, 100)
+    }, 50)
   }, [])
   
   // Reset scroll position and FAB when switching files
@@ -433,10 +448,10 @@ export function AgentsMdPage() {
         </div>
       </div>
       
-      {/* Content area */}
+      {/* Content area - relative positioning for contained ToC */}
       <div className="flex-1 relative overflow-hidden">
         <ScrollArea className="h-full" onScrollCapture={handleScroll}>
-          <div ref={scrollContainerRef} className="p-3">
+          <div ref={contentScrollRef} className="p-3">
             {viewMode === "preview" ? (
               // Preview mode with collapsible headers
               <div className="space-y-0.5">
@@ -464,29 +479,25 @@ export function AgentsMdPage() {
         </ScrollArea>
         
         {/* ToC FAB - only show in preview mode, hide on scroll down */}
-        {viewMode === "preview" && (
-          <Sheet open={tocOpen} onOpenChange={setTocOpen}>
-            <SheetTrigger asChild>
-              <button 
-                className={`absolute top-2 right-2 h-7 px-2.5 rounded-md bg-[#4a5568] text-white/90 flex items-center justify-center gap-1.5 shadow-md hover:bg-[#5a6578] transition-all duration-200 ${
-                  showFab ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
-                }`}
-              >
-                <VscListTree className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-medium">ToC</span>
-              </button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] p-0 max-h-full">
-              <SheetHeader className="p-3 pb-2 border-b border-border">
-                <SheetTitle className="text-sm">Table of Contents</SheetTitle>
-              </SheetHeader>
-              <ScrollArea className="h-[calc(100%-48px)]">
-                <div className="p-3">
-                  <TableOfContents headers={headers} onSelect={handleTocSelect} />
-                </div>
-              </ScrollArea>
-            </SheetContent>
-          </Sheet>
+        {viewMode === "preview" && !tocOpen && (
+          <button 
+            onClick={() => setTocOpen(true)}
+            className={`absolute top-2 right-2 h-7 px-2.5 rounded-md bg-[#4a5568] text-white/90 flex items-center justify-center gap-1.5 shadow-md hover:bg-[#5a6578] transition-all duration-200 ${
+              showFab ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+            }`}
+          >
+            <VscListTree className="w-3.5 h-3.5" />
+            <span className="text-[10px] font-medium">ToC</span>
+          </button>
+        )}
+        
+        {/* ToC Panel - contained within this tab */}
+        {viewMode === "preview" && tocOpen && (
+          <TocPanel 
+            headers={headers} 
+            onSelect={handleTocSelect}
+            onClose={() => setTocOpen(false)}
+          />
         )}
       </div>
     </div>
