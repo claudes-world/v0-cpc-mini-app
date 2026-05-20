@@ -53,7 +53,7 @@ export default function Home() {
           </TerminalCarousel>
           
           {/* Resize handle overlay - positioned over carousel */}
-          <div className="absolute bottom-0 right-0 z-30" data-carousel-ignore>
+          <div className="absolute -bottom-[2px] right-0 z-30" data-carousel-ignore>
             <DraggableBotSelector
               terminalHeight={terminalHeight}
               onHeightChange={(h) => {
