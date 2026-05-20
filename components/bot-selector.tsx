@@ -196,7 +196,8 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
           backgroundColor: '#4c566a',
           boxShadow: isDragging 
             ? '-6px -4px 16px -2px rgba(0,0,0,0.7), -2px 0 8px -1px rgba(0,0,0,0.4)'
-            : '-6px -4px 12px -2px rgba(0,0,0,0.5), -2px 0 6px -1px rgba(0,0,0,0.3)'
+            : '-6px -4px 12px -2px rgba(0,0,0,0.5), -2px 0 6px -1px rgba(0,0,0,0.3)',
+          marginBottom: '-1px', // Compensate for parent border
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
