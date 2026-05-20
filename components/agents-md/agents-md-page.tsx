@@ -465,23 +465,8 @@ export function AgentsMdPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Header row */}
-      <div className="flex items-center justify-between px-3 border-b border-border bg-card/50">
-        {/* Path - left side */}
-        <span className="text-[9px] text-muted-foreground truncate min-w-0">{currentPath}</span>
-        
-        {/* File toggle - center */}
-        <div className="flex justify-center">
-          <PillToggle
-            value={fileMode}
-            onChange={setFileMode}
-            options={[
-              { value: "claude", label: "CLAUDE.md" },
-              { value: "agents", label: "AGENTS.md" },
-            ]}
-          />
-        </div>
-        
-        {/* View toggle - right side */}
+      <div className="flex items-center justify-between px-3 py-px border-b border-border bg-card/50">
+        {/* View toggle - left side */}
         <PillToggle
           value={viewMode}
           onChange={setViewMode}
@@ -490,6 +475,19 @@ export function AgentsMdPage() {
             { value: "markdown", label: "Markdown" },
           ]}
         />
+        
+        {/* File toggle and path - right side */}
+        <div className="flex items-center gap-2">
+          <PillToggle
+            value={fileMode}
+            onChange={setFileMode}
+            options={[
+              { value: "claude", label: "CLAUDE.md" },
+              { value: "agents", label: "AGENTS.md" },
+            ]}
+          />
+          <span className="text-[9px] text-muted-foreground truncate">{currentPath}</span>
+        </div>
       </div>
       
       {/* Content area - relative positioning for contained ToC */}
