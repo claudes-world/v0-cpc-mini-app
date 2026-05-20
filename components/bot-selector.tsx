@@ -2,6 +2,10 @@
 
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { VscChevronDown } from "react-icons/vsc"
+import { GripVertical } from "lucide-react"
+
+// Calculate the width needed for the widest bot label
+const WIDEST_LABEL = bots.reduce((max, bot) => bot.label.length > max.length ? bot.label : max, "")
 import { useState, useRef, useCallback, useEffect } from "react"
 import { WebHaptics } from "web-haptics"
 
@@ -181,9 +185,6 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
     window.addEventListener('mouseup', handleMouseUp)
   }, [handleStart, handleMove, handleEnd])
 
-  // Find current snap index for visual indicator
-  const currentSnapIndex = SNAP_POINTS.indexOf(getClosestSnapPoint(terminalHeight))
-
   return (
     <SelectPrimitive.Root value={value} onValueChange={handleValueChange} open={selectOpen} onOpenChange={setSelectOpen}>
       {/* Combined draggable select trigger */}
@@ -202,28 +203,22 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleMouseDown}
       >
-        {/* Snap point indicators */}
-        <div className="flex gap-0.5 px-1.5 py-1 border-r border-[#3b4252]">
-          {SNAP_POINTS.map((_, i) => (
-            <div
-              key={i}
-              className={`w-1 h-1 rounded-full transition-colors ${
-                i <= currentSnapIndex ? 'bg-[#88c0d0]' : 'bg-[#3b4252]'
-              }`}
-            />
-          ))}
+        {/* Drag handle grip */}
+        <div className="flex items-center px-0.5 py-1 border-r border-[#3b4252]">
+          <GripVertical className="w-3 h-3 text-[#d8dee9]" />
         </div>
         
-        {/* Bot selector trigger - visual only, interaction handled by parent */}
+        {/* Bot selector trigger - fixed width based on widest label */}
         <SelectPrimitive.Trigger
-          className="inline-flex items-center gap-1 px-1.5 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
+          className="inline-flex items-center justify-between gap-1 px-1.5 py-1 text-[9px] font-mono text-[#d8dee9] hover:text-white transition-colors outline-none pointer-events-none"
+          style={{ width: `${Math.min(WIDEST_LABEL.length * 0.55 + 1.5, 8)}em` }}
           tabIndex={-1}
         >
           <SelectPrimitive.Value>
             {selectedBot?.label}
           </SelectPrimitive.Value>
           <SelectPrimitive.Icon>
-            <VscChevronDown className="w-2.5 h-2.5" />
+            <VscChevronDown className="w-2.5 h-2.5 shrink-0" />
           </SelectPrimitive.Icon>
         </SelectPrimitive.Trigger>
       </div>
