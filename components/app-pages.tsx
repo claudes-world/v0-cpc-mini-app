@@ -7,12 +7,18 @@ import { WebHaptics } from "web-haptics"
 import { ActivityPage } from "./activity/activity-page"
 import { AgentsMdPage } from "./agents-md/agents-md-page"
 
-// Safe haptics wrapper - vibrate might not be available in all environments
-const vibrate = (options: { duration: number; intensity: number }) => {
+// Create haptics instance
+let haptics: WebHaptics | null = null
+try {
+  haptics = new WebHaptics()
+} catch {
+  // Haptics not available
+}
+
+// Safe haptics wrapper using trigger with presets
+const triggerHaptic = (preset: "success" | "warning" | "error" | "light" | "medium" | "heavy" | "selection" | "impact") => {
   try {
-    if (typeof WebHaptics?.vibrate === 'function') {
-      WebHaptics.vibrate(options)
-    }
+    haptics?.trigger(preset)
   } catch {
     // Haptics not available
   }
@@ -86,7 +92,7 @@ export function AppPages({ tabs }: AppPagesProps) {
       if (Math.abs(rawDiff) > deadZonePixels && canSwipe && !deadZonePassedRef.current) {
         deadZonePassedRef.current = true
         setIsActivelyDragging(true)
-        vibrate({ duration: 10, intensity: 0.5 })
+        triggerHaptic("light")
       }
       
       // Calculate effective diff (subtracting dead zone)
@@ -110,12 +116,12 @@ export function AppPages({ tabs }: AppPagesProps) {
         // Just passed commit threshold - trigger haptic
         thresholdPassedRef.current = true
         setHasPassedThreshold(true)
-        vibrate({ duration: 15, intensity: 0.8 })
+        triggerHaptic("medium")
       } else if (!isOverCommitThreshold && thresholdPassedRef.current) {
         // Went back below commit threshold - trigger softer haptic
         thresholdPassedRef.current = false
         setHasPassedThreshold(false)
-        vibrate({ duration: 10, intensity: 0.4 })
+        triggerHaptic("light")
       }
 
       // Calculate visual translation
