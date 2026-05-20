@@ -196,7 +196,7 @@ export function DraggableBotSelector({ terminalHeight, onHeightChange, selectedB
       {/* Combined draggable select trigger - the Trigger wraps everything so portal positions correctly */}
       <SelectPrimitive.Trigger asChild>
         <div
-          className={`inline-flex items-stretch rounded-tl border-t border-l border-border transition-all touch-none select-none cursor-ns-resize ${isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
+          className={`inline-flex items-stretch rounded-tl border-t-2 border-l-2 border-border transition-all touch-none select-none cursor-ns-resize ${isDragging ? 'scale-105 opacity-100' : 'opacity-90 hover:opacity-100'
             }`}
           style={{
             backgroundColor: '#4c566a',
