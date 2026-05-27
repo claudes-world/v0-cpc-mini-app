@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { SystemMetrics } from "@/components/system-metrics"
 
 // Nord-themed keyboard key colors
 const keyStyles = {
@@ -105,12 +106,8 @@ export function TerminalControls() {
 
   return (
     <div className="h-full flex flex-col bg-secondary/20">
-      {/* Pill chips row */}
-      <div className="flex items-center gap-1.5 p-1.5 border-b border-border/50">
-        <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Alpha</span>
-        <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Beta</span>
-        <span className="px-2 py-0.5 text-[9px] font-medium rounded-full bg-accent text-accent-foreground">Gamma</span>
-      </div>
+      {/* System metrics gauges */}
+      <SystemMetrics />
 
       {/* Keyboard keys - row 1 */}
       <div className="flex items-center gap-1 px-1.5 pt-1.5 pb-0.5">
